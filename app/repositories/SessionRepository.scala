@@ -55,7 +55,7 @@ class SessionRepository @Inject()(
 
   private def byId(id: String): Bson = Filters.equal("_id", id)
 
-  def keepAlive(id: String): Future[Boolean] = Mdc.preservingMdc {
+  def keepAlive(id: String): Future[Boolean] = {
     collection
       .updateOne(
         filter = byId(id),
@@ -85,7 +85,7 @@ class SessionRepository @Inject()(
         options     = ReplaceOptions().upsert(true)
       )
       .toFuture()
-      .map(_ => true)
+      .map(_ => true)(ec)
   }
 
   def clear(id: String): Future[Boolean] = Mdc.preservingMdc {

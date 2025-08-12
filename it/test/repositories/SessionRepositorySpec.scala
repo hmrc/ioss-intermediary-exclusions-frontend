@@ -49,10 +49,10 @@ class SessionRepositorySpec
 
       val expectedResult = userAnswers copy (lastUpdated = instant)
 
-      val setResult     = repository.set(userAnswers).futureValue
+      val _ = repository.set(userAnswers).futureValue
       val updatedRecord = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
 
-      updatedRecord mustEqual expectedResult
+      updatedRecord `mustBe` expectedResult
     }
 
     mustPreserveMdc(repository.set(userAnswers))
@@ -69,7 +69,7 @@ class SessionRepositorySpec
         val result         = repository.get(userAnswers.id).futureValue
         val expectedResult = userAnswers copy (lastUpdated = instant)
 
-        result.value mustEqual expectedResult
+        result.value `mustBe` expectedResult
       }
     }
 
@@ -90,7 +90,7 @@ class SessionRepositorySpec
 
       insert(userAnswers).futureValue
 
-      val result = repository.clear(userAnswers.id).futureValue
+      val _ = repository.clear(userAnswers.id).futureValue
 
       repository.get(userAnswers.id).futureValue must not be defined
     }
@@ -98,7 +98,7 @@ class SessionRepositorySpec
     "must return true when there is no record to remove" in {
       val result = repository.clear("id that does not exist").futureValue
 
-      result mustEqual true
+      result mustBe true
     }
 
     mustPreserveMdc(repository.clear(userAnswers.id))
@@ -112,12 +112,12 @@ class SessionRepositorySpec
 
         insert(userAnswers).futureValue
 
-        val result = repository.keepAlive(userAnswers.id).futureValue
+        val _ = repository.keepAlive(userAnswers.id).futureValue
 
         val expectedUpdatedAnswers = userAnswers copy (lastUpdated = instant)
 
         val updatedAnswers = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
-        updatedAnswers mustEqual expectedUpdatedAnswers
+        updatedAnswers mustBe expectedUpdatedAnswers
       }
     }
 
@@ -125,7 +125,7 @@ class SessionRepositorySpec
 
       "must return true" in {
 
-        repository.keepAlive("id that does not exist").futureValue mustEqual true
+        repository.keepAlive("id that does not exist").futureValue mustBe true
       }
     }
 
@@ -141,7 +141,7 @@ class SessionRepositorySpec
       MDC.put("test", "foo")
 
       f.map { _ =>
-        MDC.get("test") mustEqual "foo"
+        MDC.get("test") `mustBe` "foo"
       }.futureValue
     }
 }
