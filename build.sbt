@@ -1,5 +1,5 @@
 import play.sbt.routes.RoutesKeys
-import sbt.Def
+import sbt.{Def, GlobFilter}
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
@@ -11,8 +11,11 @@ ThisBuild / scalaVersion := "3.3.5"
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
-  .settings(inConfig(Test)(testSettings): _*)
+  .settings(inConfig(Test)(testSettings) *)
+  .configs(IntegrationTest)
+  .settings(inConfig(IntegrationTest)(itSettings) *)
   .settings(ThisBuild / useSuperShell := false)
+  .settings(scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
   .settings(
     name := appName,
     RoutesKeys.routesImport ++= Seq(
@@ -31,7 +34,7 @@ lazy val microservice = (project in file("."))
       "controllers.routes._",
       "viewmodels.govuk.all._"
     ),
-    PlayKeys.playDefaultPort := 9000,
+    PlayKeys.playDefaultPort := 10177,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;" +
       ".*Routes.*;.*viewmodels.govuk.*;",
     ScoverageKeys.coverageMinimumStmtTotal := 78,
@@ -39,20 +42,38 @@ lazy val microservice = (project in file("."))
     ScoverageKeys.coverageHighlighting := true,
     scalacOptions ++= Seq(
       "-feature",
-      "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s"
+      "-Wconf:msg=deprecation:w,msg=feature:w,msg=optimizer:w,src=target/.*:s"
     ),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
+    // concatenate js
+    Concat.groups := Seq(
+      "javascripts/application.js" ->
+        group(
+          baseDirectory.value / "app" / "assets" / "javascripts" * "*.js"
+        )
+    ),
+    uglifyOps := UglifyOps.singleFile,
+    // prevent removal of unused code which generates warning errors due to use of third-party libs
+    uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(digest),
-    Assets / pipelineStages := Seq(concat)
+    Assets / pipelineStages := Seq(concat),
+    uglify / includeFilter := GlobFilter("application*.js")
   )
 
-lazy val testSettings: Seq[Def.Setting[_]] = Seq(
+lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork := true,
   unmanagedSourceDirectories += baseDirectory.value / "test-utils"
 )
 
-lazy val it =
-  (project in file("it"))
-    .enablePlugins(PlayScala)
-    .dependsOn(microservice % "test->test")
+lazy val itSettings = Defaults.itSettings ++ Seq(
+  unmanagedSourceDirectories := Seq(
+    baseDirectory.value / "it",
+    baseDirectory.value / "test-utils"
+  ),
+  unmanagedResourceDirectories := Seq(
+    baseDirectory.value / "it" / "resources"
+  ),
+  parallelExecution := false,
+  fork := true
+)
