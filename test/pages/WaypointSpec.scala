@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package navigation
+package pages
 
-import play.api.mvc.Call
-import pages._
-import models.{Mode, UserAnswers}
+import org.scalatest.OptionValues
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers
 
-class FakeNavigator(desiredRoute: Call) extends Navigator {
+class WaypointSpec extends AnyFreeSpec with Matchers with OptionValues {
+  
+  // TODO once authenticated journey initiates with loop journeys
+  "fromString" - {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
-    desiredRoute
+    "must return Check Your Answers when given its waypoint" in {
+      Waypoint.fromString("check-your-answers") mustBe None
+    }
+
+    
+  }
 }
