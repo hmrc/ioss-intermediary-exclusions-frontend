@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package controllers
+package forms
 
 import javax.inject.Inject
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-class IndexController @Inject()(
-                                 val controllerComponents: MessagesControllerComponents,
-                               ) extends FrontendBaseController with I18nSupport {
+import forms.mappings.Mappings
+import play.api.data.Form
 
-  def onPageLoad(): Action[AnyContent] = Action { _ =>
-    Redirect(routes.MoveCountryController.onPageLoad())
-  }
+class MoveCountryFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("moveCountry.error.required")
+    )
 }

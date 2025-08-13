@@ -21,3 +21,7 @@ GET         /account/signed-out                          controllers.auth.Signed
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
 
 GET         /cannot-use-this-service                     controllers.CannotUseNotAnIntermediaryController.onPageLoad()
+
+GET        /exclusions-moved-to-a-different-country      controllers.MoveCountryController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
+POST       /xclusions-moved-to-a-different-country       controllers.MoveCountryController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+

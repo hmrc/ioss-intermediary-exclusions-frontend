@@ -14,29 +14,32 @@
  * limitations under the License.
  */
 
-package controllers
+package forms
 
-import base.SpecBase
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-class IndexControllerSpec extends SpecBase {
+class MoveCountryFormProviderSpec extends BooleanFieldBehaviours {
 
-  "Index Controller" - {
+  val requiredKey = "moveCountry.error.required"
+  val invalidKey = "error.boolean"
 
-    "must return OK and the correct view for a GET" in {
+  val form = new MoveCountryFormProvider()()
 
-      val application = applicationBuilder(userAnswers = None).build()
+  ".value" - {
 
-      running(application) {
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+    val fieldName = "value"
 
-        val result = route(application, request).value
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
 
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustBe routes.MoveCountryController.onPageLoad().url
-      }
-    }
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
   }
 }

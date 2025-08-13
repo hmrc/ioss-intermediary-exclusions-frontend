@@ -50,3 +50,9 @@ unauthorised.heading = You can’t access this service with this account
 
 cannotUseNotAnIntermediary.title = You cannot use this service
 cannotUseNotAnIntermediary.heading = You cannot use this service
+
+moveCountry.title = Are you moving your business to an EU country?
+moveCountry.heading = Are you moving your business to an EU country?
+moveCountry.checkYourAnswersLabel = Moving business to an EU country
+moveCountry.error.required = Select yes if you are moving your business to an EU country
+moveCountry.change.hidden = if you moving your business to an EU country
