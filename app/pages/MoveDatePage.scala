@@ -17,22 +17,23 @@
 package pages
 
 import controllers.routes
-import models.{Country, UserAnswers}
+import models.UserAnswers
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
-case object EuCountryPage extends QuestionPage[Country] {
+import java.time.LocalDate
+
+case object MoveDatePage extends QuestionPage[LocalDate] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "euCountry"
+  override def toString: String = "moveDate"
 
   override def route(waypoints: Waypoints): Call = {
-    routes.EuCountryController.onPageLoad(waypoints)
-  }
-  
-  override def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
-    MoveDatePage
+    routes.MoveDateController.onPageLoad(waypoints)
   }
 
+  override protected def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
+    JourneyRecoveryPage //todo EuVatNumberPage
+  }
 }

@@ -14,25 +14,10 @@
  * limitations under the License.
  */
 
-package pages
+import java.time.LocalDate
 
-import controllers.routes
-import models.{Country, UserAnswers}
-import play.api.libs.json.JsPath
-import play.api.mvc.Call
-
-case object EuCountryPage extends QuestionPage[Country] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "euCountry"
-
-  override def route(waypoints: Waypoints): Call = {
-    routes.EuCountryController.onPageLoad(waypoints)
+package object date {
+  implicit class LocalDateOps(val localDate: LocalDate) extends Ordered[LocalDate] {
+    def compare(other: LocalDate): Int = localDate.compareTo(other)
   }
-  
-  override def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
-    MoveDatePage
-  }
-
 }

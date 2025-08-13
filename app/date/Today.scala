@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package date
 
-import controllers.routes
-import models.{Country, UserAnswers}
-import play.api.libs.json.JsPath
-import play.api.mvc.Call
+import java.time.{Clock, LocalDate}
+import javax.inject.Inject
 
-case object EuCountryPage extends QuestionPage[Country] {
+class TodayImpl @Inject() (val clock: Clock) extends Today {
+  override def date: LocalDate = LocalDate.now(clock)
+}
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "euCountry"
-
-  override def route(waypoints: Waypoints): Call = {
-    routes.EuCountryController.onPageLoad(waypoints)
-  }
-  
-  override def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
-    MoveDatePage
-  }
-
+trait Today {
+  def date: LocalDate
 }

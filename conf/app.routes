@@ -8,7 +8,7 @@ GET         /assets/*file                                controllers.Assets.vers
 
 GET         /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
-GET         /refresh-session                             controllers.KeepAliveController.keepAlive()
+GET         /refresh-session                             controllers.KeepAliveController.keepAlive
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
@@ -30,3 +30,6 @@ POST       /exclusions-which-eu-country                  controllers.EuCountryCo
 
 GET        /exclusions-leave-scheme                      controllers.LeaveSchemeController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
 POST       /exclusions-leave-scheme                      controllers.LeaveSchemeController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+
+GET        /exclusions-move-date                         controllers.MoveDateController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
+POST       /exclusions-move-date                         controllers.MoveDateController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)

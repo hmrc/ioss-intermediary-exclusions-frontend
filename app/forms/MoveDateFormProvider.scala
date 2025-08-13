@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import controllers.routes
-import models.{Country, UserAnswers}
-import play.api.libs.json.JsPath
-import play.api.mvc.Call
+import forms.mappings.Mappings
+import play.api.data.Form
+import play.api.i18n.Messages
 
-case object EuCountryPage extends QuestionPage[Country] {
+import java.time.LocalDate
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ toString
+class MoveDateFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "euCountry"
-
-  override def route(waypoints: Waypoints): Call = {
-    routes.EuCountryController.onPageLoad(waypoints)
-  }
-  
-  override def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
-    MoveDatePage
-  }
-
+  def apply()(implicit messages: Messages): Form[LocalDate] =
+    Form(
+      "value" -> localDate(
+        invalidKey     = "moveDate.error.invalid",
+        allRequiredKey = "moveDate.error.required.all",
+        twoRequiredKey = "moveDate.error.required.two",
+        requiredKey    = "moveDate.error.required"
+      )
+    )
 }
