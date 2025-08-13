@@ -10,6 +10,8 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+site.confirm = Confirm
+site.cancel = Cancel
 
 date.day = Day
 date.month = Month
@@ -31,8 +33,10 @@ index.title = ioss-intermediary-exclusions-frontend
 index.heading = ioss-intermediary-exclusions-frontend
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
-checkYourAnswers.title = Check your answers
-checkYourAnswers.heading = Check your answers
+checkYourAnswers.title = Check your answers for leaving the IOSS service
+checkYourAnswers.heading = Check your answers for leaving the IOSS service
+checkYourAnswers.warning.text = Leaving the service will also remove all the clients you have registered.
+checkYourAnswers.hint = I confirm I want to leave the IOSS service.
 
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service

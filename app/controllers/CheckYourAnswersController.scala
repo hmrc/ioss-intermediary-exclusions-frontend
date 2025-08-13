@@ -17,17 +17,23 @@
 package controllers
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import controllers.actions.AuthenticatedControllerComponents
+import models.CheckMode
+import pages.{CheckYourAnswersPage, EmptyWaypoints, Waypoint, Waypoints}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
 
+import scala.concurrent.Future
+
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             cc: AuthenticatedControllerComponents,
-                                            view: CheckYourAnswersView
+                                            view: CheckYourAnswersView,
+                                            config: FrontendAppConfig
                                           ) extends FrontendBaseController with I18nSupport {
 
   protected val controllerComponents: MessagesControllerComponents = cc
@@ -35,10 +41,18 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] = cc.identifyAndGetData {
     implicit request =>
 
+      val thisPage = CheckYourAnswersPage
+      val waypoints = EmptyWaypoints.setNextWaypoint(Waypoint(thisPage, CheckMode, CheckYourAnswersPage.urlFragment))
       val list = SummaryListViewModel(
         rows = Seq.empty
       )
 
-      Ok(view(list))
+      Ok(view(waypoints, list, config.iossYourAccountUrl))
+  }
+  
+  def onSubmit(waypoints: Waypoints): Action[AnyContent] = cc.identifyAndGetData.async {
+    implicit request =>
+      Future.successful(Redirect(CheckYourAnswersPage.navigate(waypoints, request.userAnswers, request.userAnswers).route))
+      
   }
 }

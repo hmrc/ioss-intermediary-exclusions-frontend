@@ -17,7 +17,8 @@
 package base
 
 import controllers.actions.*
-import models.UserAnswers
+import generators.Generators
+import models.{Country, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -38,12 +39,14 @@ trait SpecBase
     with TryValues
     with OptionValues
     with ScalaFutures
-    with IntegrationPatience {
+    with IntegrationPatience
+    with Generators {
 
   val userAnswersId: String = "id"
   val vrn: Vrn = Vrn("123456789")
   val intermediaryNumber = "IN9001234567"
   val waypoints: Waypoints = EmptyWaypoints
+  val country: Country = arbitraryCountry.arbitrary.sample.value
 
   lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("", "/endpoint").withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]

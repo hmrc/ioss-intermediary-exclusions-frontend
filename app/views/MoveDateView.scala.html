@@ -25,9 +25,9 @@
     button: ButtonGroup
 )
 
-@(form: Form[_], waypoints: Waypoints)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], waypoints: Waypoints, country: Country, minDate: String, maxDate: String, dateHint: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("moveDate.title"))) {
+@layout(pageTitle = title(form, messages("moveDate.title", country.name))) {
 
     @formHelper(action = routes.MoveDateController.onSubmit(waypoints), Symbol("autoComplete") -> "off") {
 
@@ -38,9 +38,9 @@
         @govukDateInput(
             DateViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("moveDate.heading")).asPageHeading()
+                legend = LegendViewModel(messages("moveDate.heading", country.name)).asPageHeading()
             )
-            .withHint(HintViewModel(HtmlContent(messages("moveDate.hint"))))
+            .withHint(HintViewModel(HtmlContent(messages("moveDate.hint", minDate, maxDate, dateHint))))
         )
 
         @button("site.continue", MoveDatePage.route(waypoints).url, waypoints)

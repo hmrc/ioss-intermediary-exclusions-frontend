@@ -16,16 +16,18 @@
 
 package controllers
 
-import controllers.actions._
+import controllers.actions.*
+import date.Dates
 import forms.MoveDateFormProvider
+
 import javax.inject.Inject
-import pages.MoveDatePage
-import pages.Waypoints
+import pages.{EuCountryPage, MoveDatePage, Waypoints}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.MoveDateView
+import utils.FutureSyntax.FutureOps
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,6 +38,7 @@ class MoveDateController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: MoveDateFormProvider,
+                                        dates: Dates,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: MoveDateView
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -48,8 +51,16 @@ class MoveDateController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-
-      Ok(view(preparedForm, waypoints))
+      request.userAnswers.get(EuCountryPage).map { country =>
+        Ok(view(
+          preparedForm,
+          waypoints,
+          country,
+          dates.formatter.format(dates.minMoveDate),
+          dates.formatter.format(dates.maxMoveDate),
+          dates.dateHint
+        ))
+      }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
   }
 
   def onSubmit(waypoints: Waypoints): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -57,8 +68,18 @@ class MoveDateController @Inject()(
       val form = formProvider()
 
       form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, waypoints))),
+        formWithErrors => {
+          request.userAnswers.get(EuCountryPage).map { country =>
+            Future.successful(BadRequest(view(
+              formWithErrors,
+              waypoints,
+              country,
+              dates.formatter.format(dates.minMoveDate),
+              dates.formatter.format(dates.maxMoveDate),
+              dates.dateHint
+            )))
+          }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()).toFuture)
+        },
 
         exclusionDate =>
           for {

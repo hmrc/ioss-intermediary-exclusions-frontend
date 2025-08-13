@@ -14,16 +14,34 @@
  * limitations under the License.
  *@
 
+@import views.html.components.ButtonGroupProcessing
+
 @this(
+    formHelper: FormWithCSRF,
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    govukWarningText: GovukWarningText,
+    button: ButtonGroupProcessing
 )
 
-@(list: SummaryList)(implicit request: Request[_], messages: Messages)
+@(waypoints: Waypoints, list: SummaryList, cancelLink: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+    <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
 
     @govukSummaryList(list)
+
+    @govukWarningText(WarningText(
+        iconFallbackText = Option(messages("site.warning")),
+        content = Text(messages("checkYourAnswers.warning.text"))
+    ))
+
+    <p class="govuk-body govuk-!-margin-top-9">
+        @messages("checkYourAnswers.hint")
+    </p>
+
+    @formHelper(action = routes.CheckYourAnswersController.onSubmit(waypoints)) {
+        @button("site.confirm", cancelLink)
+    }
 }

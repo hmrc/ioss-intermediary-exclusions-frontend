@@ -13,6 +13,7 @@ GET         /refresh-session                             controllers.KeepAliveCo
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad()
+GET         /check-your-answers                          controllers.CheckYourAnswersController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
@@ -23,7 +24,7 @@ GET         /unauthorised                                controllers.Unauthorise
 GET         /cannot-use-this-service                     controllers.CannotUseNotAnIntermediaryController.onPageLoad()
 
 GET        /exclusions-moved-to-a-different-country      controllers.MoveCountryController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
-POST       /xclusions-moved-to-a-different-country       controllers.MoveCountryController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+POST       /exclusions-moved-to-a-different-country       controllers.MoveCountryController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
 
 GET        /exclusions-which-eu-country                  controllers.EuCountryController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
 POST       /exclusions-which-eu-country                  controllers.EuCountryController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
