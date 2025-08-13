@@ -21,15 +21,19 @@ import models.UserAnswers
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
-case object LeaveSchemePage extends QuestionPage[Boolean] {
+import java.time.LocalDate
+
+case object StoppedUsingServiceDatePage extends QuestionPage[LocalDate] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "leaveScheme"
+  override def toString: String = "stoppedUsingServiceDate"
 
   override def route(waypoints: Waypoints): Call = {
-    routes.LeaveSchemeController.onPageLoad(waypoints)
+    routes.StoppedUsingServiceDateController.onPageLoad(waypoints)
   }
 
-  override def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = CheckYourAnswersPage
+  override def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
+    CheckYourAnswersPage
+  }
 }

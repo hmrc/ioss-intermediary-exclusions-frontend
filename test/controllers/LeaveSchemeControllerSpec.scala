@@ -17,21 +17,15 @@
 package controllers
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.LeaveSchemeFormProvider
-import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import models.UserAnswers
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{EmptyWaypoints, LeaveSchemePage, Waypoints}
+import pages.{EmptyWaypoints, LeaveSchemePage, StoppedUsingServiceDatePage, Waypoints}
 import play.api.data.Form
-import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import repositories.SessionRepository
 import views.html.LeaveSchemeView
-
-import scala.concurrent.Future
 
 class LeaveSchemeControllerSpec extends SpecBase with MockitoSugar {
 
@@ -78,30 +72,33 @@ class LeaveSchemeControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to StoppedUsingServiceDatePage when the user submits true and is leaving the scheme" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, leaveSchemeRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+        val request = FakeRequest(POST, leaveSchemeRoute).withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
-        val userAnswers = UserAnswers(userAnswersId).set(LeaveSchemePage, true).success.value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual StoppedUsingServiceDatePage.route(emptyWaypoints).url
+      }
+    }
+
+    "must redirect to /your-account when the user submits false and is not leaving the scheme" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, leaveSchemeRoute).withFormUrlEncodedBody(("value", "false"))
+
+        val config = application.injector.instanceOf[FrontendAppConfig]
+
+        val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual LeaveSchemePage.navigate(emptyWaypoints, emptyUserAnswers, userAnswers).url
+        redirectLocation(result).value mustEqual config.iossYourAccountUrl
       }
     }
 

@@ -16,12 +16,12 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions.*
 import forms.LeaveSchemeFormProvider
 
 import javax.inject.Inject
-import pages.LeaveSchemePage
-import pages.Waypoints
+import pages.{LeaveSchemePage, StoppedUsingServiceDatePage, Waypoints}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,6 +38,7 @@ class LeaveSchemeController @Inject()(
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: LeaveSchemeFormProvider,
+                                         config: FrontendAppConfig,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: LeaveSchemeView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -66,7 +67,13 @@ class LeaveSchemeController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaveSchemePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(LeaveSchemePage.navigate(waypoints, request.userAnswers, updatedAnswers).route)
+          } yield {
+            if (value) {
+              Redirect(StoppedUsingServiceDatePage.route(waypoints).url)
+            } else {
+              Redirect(config.iossYourAccountUrl)
+            }
+          }
       )
   }
 }
