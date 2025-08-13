@@ -21,19 +21,20 @@ import models.UserAnswers
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
-case object MoveCountryPage extends QuestionPage[Boolean] {
+case object LeaveSchemePage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "moveCountry"
+  override def toString: String = "leaveScheme"
 
-  override def route(waypoints: Waypoints): Call =
-    routes.MoveCountryController.onPageLoad(waypoints)
+  override def route(waypoints: Waypoints): Call = {
+    routes.LeaveSchemeController.onPageLoad(waypoints)
+  }
 
-  override protected def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
+  override def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
     answers.get(this).map {
-      case true => EuCountryPage
-      case false => LeaveSchemePage
+      case true => JourneyRecoveryPage //todo exclusions-stopped-using-service-date
+      case false => JourneyRecoveryPage //todo back to yourAccount
     }.orRecover
   }
 }

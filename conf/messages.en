@@ -63,3 +63,9 @@ euCountry.checkYourAnswersLabel = New Country
 euCountry.error.required = Select the country your business is moving to
 euCountry.change.hidden = EuCountry
 euCountry.hint = Start typing an EU country
+
+leaveScheme.title = Are you sure you want to leave the Import One Stop Shop scheme?
+leaveScheme.heading = Are you sure you want to leave the Import One Stop Shop scheme?
+leaveScheme.checkYourAnswersLabel = leave scheme
+leaveScheme.error.required = Select yes if you want to leave the Import One Stop Shop scheme
+leaveScheme.change.hidden = leave scheme

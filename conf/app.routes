@@ -27,3 +27,6 @@ POST       /xclusions-moved-to-a-different-country       controllers.MoveCountry
 
 GET        /exclusions-which-eu-country                  controllers.EuCountryController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
 POST       /exclusions-which-eu-country                  controllers.EuCountryController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+
+GET        /exclusions-leave-scheme                      controllers.LeaveSchemeController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
+POST       /exclusions-leave-scheme                      controllers.LeaveSchemeController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
