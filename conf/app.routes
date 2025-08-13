@@ -25,3 +25,5 @@ GET         /cannot-use-this-service                     controllers.CannotUseNo
 GET        /exclusions-moved-to-a-different-country      controllers.MoveCountryController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
 POST       /xclusions-moved-to-a-different-country       controllers.MoveCountryController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
 
+GET        /exclusions-which-eu-country                  controllers.EuCountryController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
+POST       /exclusions-which-eu-country                  controllers.EuCountryController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)

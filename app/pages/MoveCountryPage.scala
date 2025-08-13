@@ -32,7 +32,7 @@ case object MoveCountryPage extends QuestionPage[Boolean] {
 
   override protected def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
     answers.get(this).map {
-      case true => JourneyRecoveryPage //todo EuCountyPage
+      case true => EuCountryPage
       case false => JourneyRecoveryPage //todo LeaveSchemePage
     }.orRecover
   }

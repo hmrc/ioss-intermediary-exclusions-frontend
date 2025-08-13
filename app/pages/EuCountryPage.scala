@@ -14,11 +14,25 @@
  * limitations under the License.
  */
 
-package object pages {
+package pages
 
-  implicit class RecoveryOps(val a: Option[Page]) {
+import controllers.routes
+import models.{Country, UserAnswers}
+import play.api.libs.json.JsPath
+import play.api.mvc.Call
 
-    def orRecover: Page =
-      a.getOrElse(JourneyRecoveryPage)
+case object EuCountryPage extends QuestionPage[Country] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "euCountry"
+
+  override def route(waypoints: Waypoints): Call = {
+    routes.EuCountryController.onPageLoad(waypoints)
   }
+  
+  override def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
+    JourneyRecoveryPage //todo MoveDatePage
+  }
+
 }

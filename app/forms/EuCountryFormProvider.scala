@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package object pages {
+package forms
 
-  implicit class RecoveryOps(val a: Option[Page]) {
+import javax.inject.Inject
+import forms.mappings.Mappings
+import models.Country
+import play.api.data.Form
 
-    def orRecover: Page =
-      a.getOrElse(JourneyRecoveryPage)
-  }
+class EuCountryFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Country] =
+    Form(
+      "value" -> text("euCountry.error.required")
+        .verifying("euCountry.error.required", value => Country.euCountries.exists(_.code == value))
+        .transform[Country](value => Country.euCountries.find(_.code == value).get, _.code)
+    )
 }
