@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-package pages
+package forms
 
-import controllers.routes
-import models.UserAnswers
-import play.api.libs.json.JsPath
-import play.api.mvc.Call
+import forms.mappings.Mappings
+import javax.inject.Inject
+import play.api.data.Form
 
-import java.time.LocalDate
+class EuVatNumberFormProvider @Inject() extends Mappings {
 
-case object MoveDatePage extends QuestionPage[LocalDate] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "moveDate"
-
-  override def route(waypoints: Waypoints): Call = {
-    routes.MoveDateController.onPageLoad(waypoints)
-  }
-
-  override protected def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
-    EuVatNumberPage
-  }
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("euVatNumber.error.required")
+        .verifying(maxLength(100, "euVatNumber.error.invalid"))
+    )
 }

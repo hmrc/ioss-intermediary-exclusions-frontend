@@ -21,19 +21,17 @@ import models.UserAnswers
 import play.api.libs.json.JsPath
 import play.api.mvc.Call
 
-import java.time.LocalDate
-
-case object MoveDatePage extends QuestionPage[LocalDate] {
+case object EuVatNumberPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "moveDate"
+  override def toString: String = "euVatNumber"
 
   override def route(waypoints: Waypoints): Call = {
-    routes.MoveDateController.onPageLoad(waypoints)
+    routes.EuVatNumberController.onPageLoad(waypoints)
   }
 
-  override protected def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
-    EuVatNumberPage
+  override def nextPageNormalMode(waypoints: Waypoints, answers: UserAnswers): Page = {
+    JourneyRecoveryPage //todo CheckYourAnswersPage
   }
 }

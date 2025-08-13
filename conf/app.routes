@@ -33,3 +33,6 @@ POST       /exclusions-leave-scheme                      controllers.LeaveScheme
 
 GET        /exclusions-move-date                         controllers.MoveDateController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
 POST       /exclusions-move-date                         controllers.MoveDateController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+
+GET        /exclusions-tax-number                        controllers.EuVatNumberController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
+POST       /exclusions-tax-number                        controllers.EuVatNumberController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
