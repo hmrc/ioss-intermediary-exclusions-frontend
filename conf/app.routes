@@ -13,7 +13,7 @@ GET         /refresh-session                             controllers.KeepAliveCo
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad()
-GET         /check-your-answers                          controllers.CheckYourAnswersController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+POST        /check-your-answers                          controllers.CheckYourAnswersController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
@@ -40,3 +40,5 @@ POST       /exclusions-tax-number                        controllers.EuVatNumber
 
 GET        /exclusions-stopped-using-service-date        controllers.StoppedUsingServiceDateController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
 POST       /exclusions-stopped-using-service-date        controllers.StoppedUsingServiceDateController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+
+GET        /exclusions-request-received                  controllers.ApplicationCompleteController.onPageLoad()

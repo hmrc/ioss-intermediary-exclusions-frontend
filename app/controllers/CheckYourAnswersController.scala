@@ -42,7 +42,7 @@ class CheckYourAnswersController @Inject()(
     implicit request =>
 
       val thisPage = CheckYourAnswersPage
-      val waypoints = EmptyWaypoints.setNextWaypoint(Waypoint(thisPage, CheckMode, CheckYourAnswersPage.urlFragment))
+      val waypoints = EmptyWaypoints
       val list = SummaryListViewModel(
         rows = Seq.empty
       )
