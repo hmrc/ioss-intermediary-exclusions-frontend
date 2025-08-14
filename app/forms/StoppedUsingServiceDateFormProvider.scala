@@ -21,7 +21,6 @@ import play.api.data.Form
 import play.api.i18n.Messages
 
 import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters.lastDayOfMonth
 import javax.inject.Inject
 
 class StoppedUsingServiceDateFormProvider @Inject() extends Mappings {

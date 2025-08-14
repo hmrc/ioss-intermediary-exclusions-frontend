@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import date.Dates
 import forms.MoveDateFormProvider
-import models.{NormalMode, UserAnswers}
+import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -27,7 +27,7 @@ import pages.{EmptyWaypoints, EuCountryPage, MoveDatePage, Waypoints}
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository

@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import forms.EuVatNumberFormProvider
-import models.{Country, UserAnswers}
+import models.Country
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar

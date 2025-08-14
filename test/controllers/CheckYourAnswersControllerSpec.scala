@@ -18,17 +18,11 @@ package controllers
 
 import base.SpecBase
 import config.FrontendAppConfig
-import date.{Dates, Today}
-import models.{CheckMode, Country}
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import viewmodels.govuk.SummaryListFluency
 import views.html.CheckYourAnswersView
-
-import java.time.LocalDate
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -44,7 +38,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val result = route(application, request).value
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
         val view = application.injector.instanceOf[CheckYourAnswersView]
-        val waypoints = EmptyWaypoints.setNextWaypoint(Waypoint(CheckYourAnswersPage, CheckMode, CheckYourAnswersPage.urlFragment))
+        val waypoints = EmptyWaypoints
         val list = SummaryListViewModel(Seq.empty)
 
         status(result) mustEqual OK

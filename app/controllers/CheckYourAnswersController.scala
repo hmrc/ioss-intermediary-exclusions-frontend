@@ -19,8 +19,7 @@ package controllers
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.AuthenticatedControllerComponents
-import models.CheckMode
-import pages.{CheckYourAnswersPage, EmptyWaypoints, Waypoint, Waypoints}
+import pages.{CheckYourAnswersPage, EmptyWaypoints, Waypoints}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -40,8 +39,7 @@ class CheckYourAnswersController @Inject()(
   
   def onPageLoad(): Action[AnyContent] = cc.identifyAndGetData {
     implicit request =>
-
-      val thisPage = CheckYourAnswersPage
+      
       val waypoints = EmptyWaypoints
       val list = SummaryListViewModel(
         rows = Seq.empty
