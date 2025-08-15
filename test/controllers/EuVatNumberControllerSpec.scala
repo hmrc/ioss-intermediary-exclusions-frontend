@@ -19,26 +19,19 @@ package controllers
 import base.SpecBase
 import forms.EuVatNumberFormProvider
 import models.Country
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.{EmptyWaypoints, EuCountryPage, EuVatNumberPage, Waypoints}
 import play.api.data.Form
-import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import repositories.SessionRepository
 import views.html.EuVatNumberView
-
-import scala.concurrent.Future
 
 class EuVatNumberControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new EuVatNumberFormProvider()
-  val form: Form[String] = formProvider()
+  val form: Form[String] = formProvider(country)
 
   private val emptyWaypoints: Waypoints = EmptyWaypoints
-  private val country = Country("IT", "Italy")
   private val userAnswersWithCountry = emptyUserAnswers.set(EuCountryPage, country).success.value
 
   lazy val euVatNumberRoute: String = routes.EuVatNumberController.onPageLoad(emptyWaypoints).url
@@ -57,7 +50,7 @@ class EuVatNumberControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[EuVatNumberView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, emptyWaypoints, country)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, emptyWaypoints, countryWithValidationDetails)(request, messages(application)).toString
       }
     }
 
@@ -75,27 +68,19 @@ class EuVatNumberControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), emptyWaypoints, country)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), emptyWaypoints, countryWithValidationDetails)(request, messages(application)).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
       val application =
-        applicationBuilder(userAnswers = Some(userAnswersWithCountry))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+        applicationBuilder(userAnswers = Some(userAnswersWithCountry)).build()
 
       running(application) {
         val request =
           FakeRequest(POST, euVatNumberRoute)
-            .withFormUrlEncodedBody(("value", "validAnswer"))
+            .withFormUrlEncodedBody(("value", euVatNumber))
 
         val result = route(application, request).value
 
@@ -120,7 +105,7 @@ class EuVatNumberControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, emptyWaypoints, country)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, emptyWaypoints, countryWithValidationDetails)(request, messages(application)).toString
       }
     }
 

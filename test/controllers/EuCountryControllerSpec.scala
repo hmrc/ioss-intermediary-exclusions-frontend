@@ -19,22 +19,16 @@ package controllers
 import base.SpecBase
 import forms.EuCountryFormProvider
 import models.{Country, UserAnswers}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.{EmptyWaypoints, EuCountryPage, Waypoints}
+import pages.{EmptyWaypoints, EuCountryPage, EuVatNumberPage, Waypoints}
 import play.api.data.Form
-import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import repositories.SessionRepository
 import views.html.EuCountryView
 
-import scala.concurrent.Future
 
 class EuCountryControllerSpec extends SpecBase with MockitoSugar {
 
-  private val country = Country("IT", "Italy")
   private val emptyWaypoints: Waypoints = EmptyWaypoints
   
   val formProvider = new EuCountryFormProvider()
@@ -80,16 +74,8 @@ class EuCountryControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+        applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request =
@@ -102,6 +88,22 @@ class EuCountryControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual EuCountryPage.navigate(emptyWaypoints, emptyUserAnswers, userAnswers).url
+      }
+    }
+
+    "must redirect to the EU VAT number page when the user changes the country in check mode" in {
+
+      val euCountryCheckModeRoute = routes.EuCountryController.onPageLoad(checkModeWaypoints).url
+
+      val application = applicationBuilder(userAnswers = Some(completeUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, euCountryCheckModeRoute).withFormUrlEncodedBody(("value", anotherCountry.code))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual EuVatNumberPage.route(checkModeWaypoints).url
       }
     }
 

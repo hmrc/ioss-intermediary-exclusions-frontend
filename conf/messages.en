@@ -1,4 +1,4 @@
-service.name = ioss-intermediary-exclusions-frontend
+service.name = Leave the Import One Stop Shop Intermediary service
 
 site.back = Back
 site.remove = Remove
@@ -28,6 +28,10 @@ timeout.signOut = Sign out
 error.title.prefix = Error:
 error.prefix = Error
 error.summary.title = There is a problem
+error.missing_answers = Some of your information is missing. You must complete this before you can submit your changes.
+error.missing_answers_header = Some information is missing.
+error.missing_answers_prompt.general = You need to complete the missing information before you continue.
+error.resolve_missing_answers = Resolve missing answers
 
 index.title = ioss-intermediary-exclusions-frontend
 index.heading = ioss-intermediary-exclusions-frontend

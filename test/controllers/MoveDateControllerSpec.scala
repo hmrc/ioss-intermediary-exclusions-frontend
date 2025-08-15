@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import date.Dates
+import date.{Dates, Today, TodayImpl}
 import forms.MoveDateFormProvider
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
@@ -40,7 +40,9 @@ class MoveDateControllerSpec extends SpecBase with MockitoSugar {
 
   private implicit val messages: Messages = stubMessages()
 
-  val formProvider = new MoveDateFormProvider()
+  val today: Today = new TodayImpl(Dates.clock)
+  val dates = new Dates(today)
+  val formProvider = new MoveDateFormProvider(dates)
   val form: Form[LocalDate] = formProvider()
   val emptyWaypoints: Waypoints = EmptyWaypoints
   val validAnswer: LocalDate = LocalDate.now(ZoneOffset.UTC)
@@ -175,12 +177,40 @@ class MoveDateControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must redirect to Journey Recovery for a GET if EuCountryPage data is missing" in {
+
+      val userAnswers = UserAnswers(userAnswersId)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val result = route(application, getRequest()).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
     "must redirect to Journey Recovery for a POST if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val result = route(application, postRequest()).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey Recovery for a POST if EuCountryPage is missing" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      val invalidRequest = FakeRequest(POST, moveDateRoute).withFormUrlEncodedBody(("value", "invalid value"))
+
+      running(application) {
+        val result = route(application, invalidRequest).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
