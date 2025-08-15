@@ -17,13 +17,16 @@
 package base
 
 import controllers.actions.*
+import date.Dates
 import generators.Generators
-import models.{Country, UserAnswers}
+import models.CountryWithValidationDetails.euCountriesWithVRNValidationRules
+import models.{CheckMode, Country, CountryWithValidationDetails, UserAnswers}
+import org.scalacheck.Gen
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, TryValues}
-import pages.{EmptyWaypoints, Waypoints}
+import pages.*
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
@@ -32,6 +35,8 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.Vrn
+
+import java.time.LocalDate
 
 trait SpecBase
   extends AnyFreeSpec
@@ -45,11 +50,25 @@ trait SpecBase
   val userAnswersId: String = "id"
   val vrn: Vrn = Vrn("123456789")
   val intermediaryNumber = "IN9001234567"
-  val waypoints: Waypoints = EmptyWaypoints
   val country: Country = arbitraryCountry.arbitrary.sample.value
+  val anotherCountry: Country = Gen.oneOf(Country.euCountries.filterNot(_ == country)).sample.value
+  val moveDate: LocalDate = LocalDate.now(Dates.clock)
+  val euVatNumber: String = getEuVatNumber(country.code)
+  val waypoints: Waypoints = EmptyWaypoints
+  val checkModeWaypoints: Waypoints = waypoints.setNextWaypoint(Waypoint(CheckYourAnswersPage, CheckMode, CheckYourAnswersPage.urlFragment))
+
+  val countryWithValidationDetails: CountryWithValidationDetails =
+    euCountriesWithVRNValidationRules.find(_.country == country).value
 
   lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("", "/endpoint").withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+
+  def completeUserAnswers: UserAnswers =
+    emptyUserAnswers
+      .set(MoveCountryPage, true).success.value
+      .set(EuCountryPage, country).success.value
+      .set(MoveDatePage, moveDate).success.value
+      .set(EuVatNumberPage, euVatNumber).success.value
 
   def emptyUserAnswers : UserAnswers = UserAnswers(userAnswersId)
 
@@ -62,4 +81,9 @@ trait SpecBase
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
+
+  def getEuVatNumber(countryCode: String): String =
+    CountryWithValidationDetails.euCountriesWithVRNValidationRules.find(_.country.code == countryCode).map { matchedCountryRule =>
+      s"$countryCode${matchedCountryRule.exampleVrn}"
+    }.value
 }
