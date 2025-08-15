@@ -47,7 +47,8 @@ class StoppedUsingServiceDateController @Inject()(
   def onPageLoad(waypoints: Waypoints): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val form = formProvider()
+      val commencementDate = LocalDate.parse("2025-06-03") //todo registrationRequest schemeDetails commencement date
+      val form = formProvider(dates.today.date, commencementDate)
       
       val preparedForm = request.userAnswers.get(StoppedUsingServiceDatePage) match {
         case None => form
@@ -60,7 +61,8 @@ class StoppedUsingServiceDateController @Inject()(
   def onSubmit(waypoints: Waypoints): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val form = formProvider()
+      val commencementDate = LocalDate.parse("2025-06-03") //todo registrationRequest schemeDetails commencement date
+      val form = formProvider.apply(dates.today.date, commencementDate)
       
       form.bindFromRequest().fold(
         formWithErrors =>

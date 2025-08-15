@@ -100,7 +100,7 @@ euVatNumber.change.hidden = VAT registration number
 
 stoppedUsingServiceDate.title = When did you or when will you stop using this service?
 stoppedUsingServiceDate.heading = When did you or when will you stop using this service?
-stoppedUsingServiceDate.hint = You can enter a date from {0} up to {1}.<br/> For example, {2}.
+stoppedUsingServiceDate.hint = You can enter a date up to the last day of this month.<br/> For example, {0}.
 stoppedUsingServiceDate.checkYourAnswersLabel = Leaving date
 stoppedUsingServiceDate.error.required.all = Enter the date you stopped using this service
 stoppedUsingServiceDate.error.required.two = The date you stopped using this service must include {0} and {1}
