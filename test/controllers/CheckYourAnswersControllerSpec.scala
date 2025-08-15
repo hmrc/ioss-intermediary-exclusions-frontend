@@ -17,8 +17,10 @@
 package controllers
 
 import base.SpecBase
+import config.FrontendAppConfig
+import pages.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import viewmodels.govuk.SummaryListFluency
 import views.html.CheckYourAnswersView
 
@@ -34,12 +36,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
         val result = route(application, request).value
-
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
         val view = application.injector.instanceOf[CheckYourAnswersView]
+        val waypoints = EmptyWaypoints
         val list = SummaryListViewModel(Seq.empty)
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(waypoints, list, appConfig.iossYourAccountUrl)(request, messages(application)).toString
       }
     }
 

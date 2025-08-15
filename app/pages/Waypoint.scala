@@ -16,7 +16,7 @@
 
 package pages
 
-import models.{CheckMode, Mode, NormalMode}
+import models.Mode
 
 case class Waypoint(
                      page: WaypointPage,

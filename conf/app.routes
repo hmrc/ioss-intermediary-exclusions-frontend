@@ -8,11 +8,12 @@ GET         /assets/*file                                controllers.Assets.vers
 
 GET         /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
-GET         /refresh-session                             controllers.KeepAliveController.keepAlive()
+GET         /refresh-session                             controllers.KeepAliveController.keepAlive
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
 GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad()
+POST        /check-your-answers                          controllers.CheckYourAnswersController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
@@ -21,3 +22,23 @@ GET         /account/signed-out                          controllers.auth.Signed
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
 
 GET         /cannot-use-this-service                     controllers.CannotUseNotAnIntermediaryController.onPageLoad()
+
+GET        /exclusions-moved-to-a-different-country      controllers.MoveCountryController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
+POST       /exclusions-moved-to-a-different-country      controllers.MoveCountryController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+
+GET        /exclusions-which-eu-country                  controllers.EuCountryController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
+POST       /exclusions-which-eu-country                  controllers.EuCountryController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+
+GET        /exclusions-leave-scheme                      controllers.LeaveSchemeController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
+POST       /exclusions-leave-scheme                      controllers.LeaveSchemeController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+
+GET        /exclusions-move-date                         controllers.MoveDateController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
+POST       /exclusions-move-date                         controllers.MoveDateController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+
+GET        /exclusions-tax-number                        controllers.EuVatNumberController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
+POST       /exclusions-tax-number                        controllers.EuVatNumberController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+
+GET        /exclusions-stopped-using-service-date        controllers.StoppedUsingServiceDateController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)
+POST       /exclusions-stopped-using-service-date        controllers.StoppedUsingServiceDateController.onSubmit(waypoints: Waypoints ?= EmptyWaypoints)
+
+GET        /exclusions-request-received                  controllers.ApplicationCompleteController.onPageLoad()

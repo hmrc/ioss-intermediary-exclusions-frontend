@@ -10,6 +10,8 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+site.confirm = Confirm
+site.cancel = Cancel
 
 date.day = Day
 date.month = Month
@@ -31,8 +33,10 @@ index.title = ioss-intermediary-exclusions-frontend
 index.heading = ioss-intermediary-exclusions-frontend
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 
-checkYourAnswers.title = Check your answers
-checkYourAnswers.heading = Check your answers
+checkYourAnswers.title = Check your answers for leaving the IOSS service
+checkYourAnswers.heading = Check your answers for leaving the IOSS service
+checkYourAnswers.warning.text = Leaving the service will also remove all the clients you have registered.
+checkYourAnswers.hint = I confirm I want to leave the IOSS service.
 
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
@@ -50,3 +54,68 @@ unauthorised.heading = You can’t access this service with this account
 
 cannotUseNotAnIntermediary.title = You cannot use this service
 cannotUseNotAnIntermediary.heading = You cannot use this service
+
+moveCountry.title = Are you moving your business to an EU country?
+moveCountry.heading = Are you moving your business to an EU country?
+moveCountry.checkYourAnswersLabel = Moving business to an EU country
+moveCountry.error.required = Select yes if you are moving your business to an EU country
+moveCountry.change.hidden = if you moving your business to an EU country
+
+euCountry.title = Which country is your business moving to?
+euCountry.heading = Which country is your business moving to?
+euCountry.checkYourAnswersLabel = New Country
+euCountry.error.required = Select the country your business is moving to
+euCountry.change.hidden = EuCountry
+euCountry.hint = Start typing an EU country
+
+leaveScheme.title = Are you sure you want to leave the Import One Stop Shop scheme?
+leaveScheme.heading = Are you sure you want to leave the Import One Stop Shop scheme?
+leaveScheme.checkYourAnswersLabel = leave scheme
+leaveScheme.error.required = Select yes if you want to leave the Import One Stop Shop scheme
+leaveScheme.change.hidden = leave scheme
+
+moveDate.title = When did or when will your business move to {0}?
+moveDate.heading = When did or when will your business move to {0}?
+moveDate.hint = You can enter a date from {0} up to {1}.<br/> For example, {2}.
+moveDate.checkYourAnswersLabel = Business move date
+moveDate.error.required.all = Enter the move date
+moveDate.error.required.two = The move date must include {0} and {1}
+moveDate.error.required = The move date must include {0}
+moveDate.error.invalid = Enter a valid move date
+moveDate.error.invalid.minDate = The date your business moved must be on or after {0}
+moveDate.error.invalid.maxDate = The date your business is moving must be on or before {0}
+moveDate.change.hidden = Move Date
+
+euVatNumber.title = What is your VAT number in {0}?
+euVatNumber.heading = What is your VAT number in {0}?
+euVatNumber.hint = This will start with {0}, for example {0}{1}
+euVatNumber.checkYourAnswersLabel = VAT number
+euVatNumber.error.required = Enter your VAT registration number for {0}
+euVatNumber.error.invalid = Enter a registration number in the correct format
+euVatNumber.change.hidden = VAT registration number
+
+stoppedUsingServiceDate.title = When did you or when will you stop using this service?
+stoppedUsingServiceDate.heading = When did you or when will you stop using this service?
+stoppedUsingServiceDate.hint = You can enter a date from {0} up to {1}.<br/> For example, {2}.
+stoppedUsingServiceDate.checkYourAnswersLabel = Leaving date
+stoppedUsingServiceDate.error.required.all = Enter the date you stopped using this service
+stoppedUsingServiceDate.error.required.two = The date you stopped using this service must include {0} and {1}
+stoppedUsingServiceDate.error.required = The date you stopped using this service must include {0}
+stoppedUsingServiceDate.error.invalid = Give a correct date
+stoppedUsingServiceDate.error.invalidDateRage = The date must be between {0} and {1} inclusively
+stoppedUsingServiceDate.change.hidden = leaving date
+
+applicationComplete.title = We have received your request to leave this IOSS service
+applicationComplete.heading = We have received your request to leave this IOSS service
+applicationComplete.moving.text = You are moving your business to {0}. You will leave this service on {0}.
+applicationComplete.left.text = We will send your clients a message to let them know:
+applicationComplete.left.text.info.b1 = you have now left the service.
+applicationComplete.left.text.info.b2 = we will remove their registration from your account
+applicationComplete.next.heading = What happens next
+applicationComplete.next.info.top = You must:
+applicationComplete.next.info.bullet0 = complete any outstanding VAT returns on your account
+applicationComplete.next.info.bullet1 = complete a final VAT return for all your active clients
+applicationComplete.next.info.bullet2 = pay any VAT you still owe
+applicationComplete.next.info.bottom.p1 = To ensure continuous use of the scheme, you must register as an intermediary in {0} by <strong>{1}</strong>. You must also register any clients by then.
+applicationComplete.next.info.bottom.p2 = If you wish to cancel this, you must contact <a class="govuk-link" href="mailto:vatoss.contact@hmrc.gov.uk">vatoss.contact@hmrc.gov.uk</a> by <strong>{0}</strong>
+applicationComplete.next.info.returnToAccount = Return to your account
