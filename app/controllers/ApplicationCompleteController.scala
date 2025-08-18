@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.*
-import date.{Dates, LocalDateOps}
+import date.Dates
 import models.requests.DataRequest
 import pages.{EuCountryPage, MoveCountryPage, MoveDatePage, StoppedUsingServiceDatePage}
 
@@ -28,7 +28,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ApplicationCompleteView
 
-import java.time.LocalDate
 
 class ApplicationCompleteController @Inject()(
                                        override val messagesApi: MessagesApi,
