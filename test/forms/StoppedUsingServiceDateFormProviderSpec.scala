@@ -20,7 +20,7 @@ import forms.behaviours.DateBehaviours
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 
-import java.time.{LocalDate, ZoneOffset}
+import java.time.LocalDate
 
 class StoppedUsingServiceDateFormProviderSpec extends DateBehaviours {
 

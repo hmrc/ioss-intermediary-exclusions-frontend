@@ -52,20 +52,22 @@ class CheckYourAnswersController @Inject()(
       val euCountrySummaryRow = EuCountrySummary.row(request.userAnswers, waypoints, thisPage)
       val moveDateSummaryRow = MoveDateSummary.row(request.userAnswers, waypoints, thisPage, dates)
       val euVatNumberSummaryRow = EuVatNumberSummary.row(request.userAnswers, waypoints, thisPage)
+      val stoppedUsingServiceDateRow = StoppedUsingServiceDateSummary.row(request.userAnswers, waypoints, thisPage, dates)
 
       val list = SummaryListViewModel(
         rows = Seq(
           moveCountrySummaryRow,
           euCountrySummaryRow,
           moveDateSummaryRow,
-          euVatNumberSummaryRow
+          euVatNumberSummaryRow,
+          stoppedUsingServiceDateRow
         ).flatten
       )
 
       val isValid = validate()
       Ok(view(waypoints, list, config.iossYourAccountUrl, isValid))
   }
-  
+
   def onSubmit(waypoints: Waypoints, incompletePrompt: Boolean): Action[AnyContent] = cc.identifyAndGetData.async {
     implicit request =>
       getFirstValidationErrorRedirect(waypoints) match {
