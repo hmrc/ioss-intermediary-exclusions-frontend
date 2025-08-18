@@ -18,17 +18,17 @@ package controllers
 
 import controllers.actions.*
 import forms.EuCountryFormProvider
-import models.Country
+import models.{Country, UserAnswers}
 
 import javax.inject.Inject
-import pages.EuCountryPage
-import pages.Waypoints
+import pages.{EuCountryPage, EuVatNumberPage, Waypoints}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.EuCountryView
+import utils.FutureSyntax.FutureOps
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -65,9 +65,17 @@ class EuCountryController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EuCountryPage, value))
+            updatedAnswersEuVatNumber <- updateEuVatNumberPage(request.userAnswers, value)
+            updatedAnswers <- Future.fromTry(updatedAnswersEuVatNumber.set(EuCountryPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(EuCountryPage.navigate(waypoints, request.userAnswers, updatedAnswers).route)
       )
   }
+
+  private def updateEuVatNumberPage(userAnswers: UserAnswers, country: Country): Future[UserAnswers] =
+    if (userAnswers.get(EuCountryPage).contains(country)) {
+      userAnswers.toFuture
+    } else {
+      Future.fromTry(userAnswers.remove(EuVatNumberPage))
+    }
 }
