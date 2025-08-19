@@ -83,15 +83,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       val application = applicationBuilder(userAnswers = Some(answersWithStoppedUsingServiceDate))
         .build()
 
-          running(application) {
-            implicit val msgs: Messages = messages(application)
-        val request = FakeRequest(POST, routes.CheckYourAnswersController.onSubmit(waypoints, incompletePrompt = true).url)
-            val result = route(application, request).value
-
-            status(result) mustBe SEE_OTHER
-            redirectLocation(result).value mustBe controllers.routes.MoveDateController.onPageLoad(waypoints).url
-          }
-        }
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
 
         val result = route(application, request).value
         val view = application.injector.instanceOf[CheckYourAnswersView]
