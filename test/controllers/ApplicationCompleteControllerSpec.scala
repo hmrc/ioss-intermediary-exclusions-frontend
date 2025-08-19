@@ -18,29 +18,94 @@ package controllers
 
 import base.SpecBase
 import config.FrontendAppConfig
+import date.{Dates, Today}
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
+import pages.{EuCountryPage, MoveCountryPage, MoveDatePage, StoppedUsingServiceDatePage}
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.ApplicationCompleteView
 
+import java.time.LocalDate
+
 class ApplicationCompleteControllerSpec extends SpecBase {
+
+  val today: LocalDate = LocalDate.of(2024, 1, 25)
+  val mockToday: Today = mock[Today]
+  when(mockToday.date).thenReturn(today)
 
   "ApplicationComplete Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "when someone moves business" - {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      "must return OK and the correct view for a GET" in {
 
-      running(application) {
-        val request = FakeRequest(GET, routes.ApplicationCompleteController.onPageLoad().url)
+        val moveDate = today.plusDays(1)
 
-        val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ApplicationCompleteView]
+        val userAnswers = emptyUserAnswers
+          .set(MoveCountryPage, true).success.get
+          .set(EuCountryPage, country).success.get
+          .set(MoveDatePage, moveDate).success.get
 
-        val config = application.injector.instanceOf[FrontendAppConfig]
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[Today].toInstance(mockToday))
+          .build()
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(config.iossYourAccountUrl)(request, messages(application)).toString
+        running(application) {
+          val request = FakeRequest(GET, routes.ApplicationCompleteController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          val view = application.injector.instanceOf[ApplicationCompleteView]
+
+          val config = application.injector.instanceOf[FrontendAppConfig]
+
+          val dates = application.injector.instanceOf[Dates]
+
+          status(result) mustEqual OK
+          val leaveDate = moveDate.format(dates.formatter)
+          val maxMoveDate = moveDate.plusMonths(1).withDayOfMonth(dates.MoveDayOfMonthSplit).format(dates.formatter)
+          contentAsString(result) mustEqual view(
+            config.iossYourAccountUrl,
+            leaveDate,
+            maxMoveDate,
+            Some(messages(application)("applicationComplete.moving.text", country.name, maxMoveDate)),
+            Some(messages(application)("applicationComplete.next.info.bottom.p1", country.name, maxMoveDate))
+          )(request, messages(application)).toString
+        }
+      }
+    }
+
+    "when someone stops using the service" - {
+
+      "must return OK and the correct view for a GET" in {
+
+        val stoppedUsingServiceDate = LocalDate.of(2024, 1, 16)
+
+        val userAnswers = emptyUserAnswers
+          .set(MoveCountryPage, false).success.get
+          .set(StoppedUsingServiceDatePage, stoppedUsingServiceDate).success.get
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[Today].toInstance(mockToday))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ApplicationCompleteController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          val view = application.injector.instanceOf[ApplicationCompleteView]
+
+          val config = application.injector.instanceOf[FrontendAppConfig]
+
+          status(result) mustEqual OK
+          val leaveDate = "1 February 2024"
+          val maxChangeDate = "31 January 2024"
+          contentAsString(result) mustEqual view(config.iossYourAccountUrl, leaveDate, maxChangeDate)(request, messages(application)).toString
+        }
       }
     }
   }

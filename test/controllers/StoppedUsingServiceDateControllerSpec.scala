@@ -40,7 +40,8 @@ class StoppedUsingServiceDateControllerSpec extends SpecBase with MockitoSugar {
 
   implicit val messages: Messages = stubMessages()
   val formProvider = new StoppedUsingServiceDateFormProvider()
-  val form: Form[LocalDate] = formProvider()
+  private def form(currentDate: LocalDate = LocalDate.now(), registrationDate: LocalDate = LocalDate.now()): Form[LocalDate] =
+    formProvider.apply(currentDate, registrationDate)
   val emptyWaypoints: Waypoints = EmptyWaypoints
   val validAnswer: LocalDate = LocalDate.now(ZoneOffset.UTC)
 
@@ -75,7 +76,7 @@ class StoppedUsingServiceDateControllerSpec extends SpecBase with MockitoSugar {
         val dates = application.injector.instanceOf[Dates]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, emptyWaypoints, dates.dateHint)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form(), emptyWaypoints, dates.dateHint)(request, messages(application)).toString
       }
     }
 
@@ -94,7 +95,7 @@ class StoppedUsingServiceDateControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), emptyWaypoints, dates.dateHint)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form().fill(validAnswer), emptyWaypoints, dates.dateHint)(request, messages(application)).toString
       }
     }
 
@@ -129,7 +130,7 @@ class StoppedUsingServiceDateControllerSpec extends SpecBase with MockitoSugar {
           FakeRequest(POST, stoppedUsingServiceDateRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = form().bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[StoppedUsingServiceDateView]
         val dates = application.injector.instanceOf[Dates]

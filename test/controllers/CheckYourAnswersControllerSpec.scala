@@ -27,7 +27,8 @@ import pages.*
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import viewmodels.checkAnswers.{EuCountrySummary, EuVatNumberSummary, MoveCountrySummary, MoveDateSummary}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.checkAnswers.{EuCountrySummary, EuVatNumberSummary, MoveCountrySummary, MoveDateSummary, StoppedUsingServiceDateSummary}
 import viewmodels.govuk.SummaryListFluency
 import views.html.CheckYourAnswersView
 
@@ -64,12 +65,53 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
             MoveCountrySummary.row(answers, waypoints, CheckYourAnswersPage),
             EuCountrySummary.row(answers, waypoints, CheckYourAnswersPage),
             MoveDateSummary.row(answers, waypoints, CheckYourAnswersPage, date),
-            EuVatNumberSummary.row(answers, waypoints, CheckYourAnswersPage)
+            EuVatNumberSummary.row(answers, waypoints, CheckYourAnswersPage),
+            StoppedUsingServiceDateSummary.row(answers, waypoints, CheckYourAnswersPage, date)
           ).flatten
         )
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(waypoints, list, appConfig.iossYourAccountUrl, isValid = true)(request, messages(application)).toString
+      }
+    }
+
+    "must include StoppedUsingServiceDateSummary row in the summary list when data is present" in {
+      val testDate = LocalDate.of(2023, 12, 31)
+      val answersWithStoppedUsingServiceDate = answers
+        .set(StoppedUsingServiceDatePage, testDate).success.value
+
+      val application = applicationBuilder(userAnswers = Some(answersWithStoppedUsingServiceDate))
+        .build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+        val request = FakeRequest(GET, routes.CheckYourAnswersController.onPageLoad().url)
+
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[CheckYourAnswersView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val waypoints = EmptyWaypoints.setNextWaypoint(Waypoint(CheckYourAnswersPage, CheckMode, CheckYourAnswersPage.urlFragment))
+        val dates = application.injector.instanceOf[Dates]
+        val list = SummaryListViewModel(
+          Seq(
+            MoveCountrySummary.row(answersWithStoppedUsingServiceDate, waypoints, CheckYourAnswersPage),
+            EuCountrySummary.row(answersWithStoppedUsingServiceDate, waypoints, CheckYourAnswersPage),
+            MoveDateSummary.row(answersWithStoppedUsingServiceDate, waypoints, CheckYourAnswersPage, dates),
+            EuVatNumberSummary.row(answersWithStoppedUsingServiceDate, waypoints, CheckYourAnswersPage),
+            StoppedUsingServiceDateSummary.row(answersWithStoppedUsingServiceDate, waypoints, CheckYourAnswersPage, dates)
+          ).flatten
+        )
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe view(waypoints, list, appConfig.iossYourAccountUrl, isValid = true)(request, msgs).toString
+
+        val stoppedUsingServiceDateRow = StoppedUsingServiceDateSummary.row(answersWithStoppedUsingServiceDate, waypoints, CheckYourAnswersPage, dates)
+        stoppedUsingServiceDateRow mustBe defined
+
+        val actualValue = stoppedUsingServiceDateRow.value.value.content.asInstanceOf[Text].value
+        val expectedValue = dates.formatter.format(testDate)
+
+        actualValue mustBe expectedValue
       }
     }
 

@@ -62,9 +62,13 @@ private[mappings] class LocalDateFormatter(
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
+    val sanitisedData = data.map {
+      case (k, v) => k -> v.trim.replaceAll(" ", "")
+    }
+
     val fields = fieldKeys.map {
       field =>
-        field -> data.get(s"$key.$field").filter(_.nonEmpty)
+        field -> sanitisedData.get(s"$key.$field").filter(_.nonEmpty)
     }.toMap
 
     lazy val missingFields = fields
@@ -75,7 +79,7 @@ private[mappings] class LocalDateFormatter(
 
     fields.count(_._2.isDefined) match {
       case 3 =>
-        formatDate(key, data).left.map {
+        formatDate(key, sanitisedData).left.map {
           _.map(_.copy(key = key, args = args))
         }
       case 2 =>

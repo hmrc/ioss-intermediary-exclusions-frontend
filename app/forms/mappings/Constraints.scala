@@ -17,9 +17,11 @@
 package forms.mappings
 
 import config.CurrencyFormatter
+import date.LocalDateOps
 import java.time.LocalDate
-
 import play.api.data.validation.{Constraint, Invalid, Valid}
+
+import java.time.format.DateTimeFormatter
 
 trait Constraints {
 
@@ -130,4 +132,18 @@ trait Constraints {
           Invalid(errorKey, CurrencyFormatter.currencyFormat(maximum))
         }
     }
+
+  protected def inDateRange(minimum: LocalDate,
+                            maximum: LocalDate,
+                            errorKey: String,
+                            dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")): Constraint[LocalDate] =
+    Constraint {
+      (input: LocalDate) =>
+        if (minimum <= input && input <= maximum) {
+          Valid
+        } else {
+          Invalid(errorKey, minimum.format(dateFormatter), maximum.format(dateFormatter))
+        }
+    }
+
 }

@@ -20,22 +20,26 @@ import forms.behaviours.DateBehaviours
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 
-import java.time.{LocalDate, ZoneOffset}
+import java.time.LocalDate
 
 class StoppedUsingServiceDateFormProviderSpec extends DateBehaviours {
 
   private implicit val messages: Messages = stubMessages()
-  val form = new StoppedUsingServiceDateFormProvider()()
 
   ".value" - {
 
+    val commencementDate = LocalDate.parse("2013-12-03")
+    val currentDate = LocalDate.parse("2013-12-01")
+    val endOfPeriod = LocalDate.parse("2013-12-31")
+
+    val form = new StoppedUsingServiceDateFormProvider()(currentDate, commencementDate)
+
     val validData = datesBetween(
-      min = LocalDate.of(2000, 1, 1),
-      max = LocalDate.now(ZoneOffset.UTC)
+      min = commencementDate,
+      max = endOfPeriod
     )
 
     behave like dateField(form, "value", validData)
-
     behave like mandatoryDateField(form, "value", "stoppedUsingServiceDate.error.required.all")
   }
 }

@@ -27,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CompletionChecks
 import utils.FutureSyntax.FutureOps
-import viewmodels.checkAnswers.{EuCountrySummary, EuVatNumberSummary, MoveCountrySummary, MoveDateSummary}
+import viewmodels.checkAnswers.{EuCountrySummary, EuVatNumberSummary, MoveCountrySummary, MoveDateSummary, StoppedUsingServiceDateSummary}
 import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
 
@@ -52,20 +52,22 @@ class CheckYourAnswersController @Inject()(
       val euCountrySummaryRow = EuCountrySummary.row(request.userAnswers, waypoints, thisPage)
       val moveDateSummaryRow = MoveDateSummary.row(request.userAnswers, waypoints, thisPage, dates)
       val euVatNumberSummaryRow = EuVatNumberSummary.row(request.userAnswers, waypoints, thisPage)
+      val stoppedUsingServiceDateRow = StoppedUsingServiceDateSummary.row(request.userAnswers, waypoints, thisPage, dates)
 
       val list = SummaryListViewModel(
         rows = Seq(
           moveCountrySummaryRow,
           euCountrySummaryRow,
           moveDateSummaryRow,
-          euVatNumberSummaryRow
+          euVatNumberSummaryRow,
+          stoppedUsingServiceDateRow
         ).flatten
       )
 
       val isValid = validate()
       Ok(view(waypoints, list, config.iossYourAccountUrl, isValid))
   }
-  
+
   def onSubmit(waypoints: Waypoints, incompletePrompt: Boolean): Action[AnyContent] = cc.identifyAndGetData.async {
     implicit request =>
       getFirstValidationErrorRedirect(waypoints) match {

@@ -18,12 +18,16 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.*
+import date.Dates
+import models.requests.DataRequest
+import pages.{EuCountryPage, MoveCountryPage, MoveDatePage, StoppedUsingServiceDatePage}
 
 import javax.inject.Inject
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ApplicationCompleteView
+
 
 class ApplicationCompleteController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -32,11 +36,49 @@ class ApplicationCompleteController @Inject()(
                                        requireData: DataRequiredAction,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: ApplicationCompleteView,
+                                       dates: Dates,
                                        config: FrontendAppConfig,
                                      ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view(config.iossYourAccountUrl))
+
+      request.userAnswers.get(MoveCountryPage).flatMap { isMovingCountry =>
+        if (isMovingCountry) {
+          onMovingBusiness()
+        } else {
+          onStopUsingService()
+        }
+      }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+  }
+
+  private def onMovingBusiness()(implicit request: DataRequest[AnyContent]): Option[Result] = {
+    val messages: Messages = implicitly[Messages]
+
+    for {
+      country <- request.userAnswers.get(EuCountryPage)
+      leaveDate <- request.userAnswers.get(MoveDatePage)
+    } yield {
+      val maxChangeDate = leaveDate.plusMonths(1).withDayOfMonth(dates.MoveDayOfMonthSplit)
+
+      Ok(view(
+        config.iossYourAccountUrl,
+        dates.formatter.format(leaveDate),
+        dates.formatter.format(maxChangeDate),
+        Some(messages("applicationComplete.moving.text", country.name, dates.formatter.format(maxChangeDate))),
+        Some(messages("applicationComplete.next.info.bottom.p1", country.name, dates.formatter.format(maxChangeDate)))
+      ))
+    }
+  }
+
+  private def onStopUsingService()(implicit request: DataRequest[_]): Option[Result] = {
+    request.userAnswers.get(StoppedUsingServiceDatePage).map { stoppedUsingServiceDate =>
+      val leaveDate = dates.getLeaveDateWhenStoppedUsingService(stoppedUsingServiceDate)
+      Ok(view(
+        config.iossYourAccountUrl,
+        dates.formatter.format(leaveDate),
+        dates.formatter.format(leaveDate.minusDays(1))
+      ))
+    }
   }
 }
