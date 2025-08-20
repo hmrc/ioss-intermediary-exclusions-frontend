@@ -44,10 +44,10 @@ checkYourAnswers.hint = I confirm I want to leave the IOSS service.
 
 journeyRecovery.continue.title = Sorry, there is a problem with the service
 journeyRecovery.continue.heading = Sorry, there is a problem with the service
-journeyRecovery.continue.guidance = [Add content to explain how to proceed.]
+journeyRecovery.continue.guidance = Something has gone wrong and you will need to start again.
 journeyRecovery.startAgain.title = Sorry, there is a problem with the service
 journeyRecovery.startAgain.heading = Sorry, there is a problem with the service
-journeyRecovery.startAgain.guidance = [Add content to explain why the user needs to start again.]
+journeyRecovery.startAgain.guidance = Something has gone wrong and you will need to start again.
 
 signedOut.title = For your security, we signed you out
 signedOut.heading = For your security, we signed you out
