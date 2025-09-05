@@ -21,7 +21,6 @@ import models.UserAnswers
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.*
 import play.api.libs.json.Format
-import uk.gov.hmrc.mdc.Mdc
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -65,7 +64,7 @@ class SessionRepository @Inject()(
       .map(_ => true)
   }
 
-  def get(id: String): Future[Option[UserAnswers]] = Mdc.preservingMdc {
+  def get(id: String): Future[Option[UserAnswers]] = {
     keepAlive(id).flatMap {
       _ =>
         collection
@@ -74,7 +73,7 @@ class SessionRepository @Inject()(
     }
   }
 
-  def set(answers: UserAnswers): Future[Boolean] = Mdc.preservingMdc {
+  def set(answers: UserAnswers): Future[Boolean] = {
 
     val updatedAnswers = answers copy (lastUpdated = Instant.now(clock))
 
@@ -88,7 +87,7 @@ class SessionRepository @Inject()(
       .map(_ => true)(ec)
   }
 
-  def clear(id: String): Future[Boolean] = Mdc.preservingMdc {
+  def clear(id: String): Future[Boolean] = {
     collection
       .deleteOne(byId(id))
       .toFuture()
