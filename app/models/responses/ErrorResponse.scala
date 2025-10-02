@@ -14,11 +14,26 @@
  * limitations under the License.
  */
 
-package object pages {
+package models.responses
 
-  implicit class RecoveryOps(val a: Option[Page]) {
-
-    def orRecover: Page =
-      a.getOrElse(JourneyRecoveryPage)
-  }
+sealed trait ErrorResponse {
+  def body: String
 }
+
+case object InvalidJson extends ErrorResponse {
+  override val body: String = "Invalid JSON received"
+}
+
+case object NotFound extends ErrorResponse {
+  override val body: String = "Not found"
+}
+
+case object ConflictFound extends ErrorResponse {
+  override val body: String = "Conflict"
+}
+
+case object InternalServerError extends ErrorResponse {
+  override val body: String = "Internal server error"
+}
+
+case class UnexpectedResponseStatus(status: Int, body: String) extends ErrorResponse

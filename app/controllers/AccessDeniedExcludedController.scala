@@ -16,17 +16,24 @@
 
 package controllers
 
-import play.api.i18n.I18nSupport
+import controllers.actions.*
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.AccessDeniedExcludedView
 
 import javax.inject.Inject
 
-class IndexController @Inject()(
-                                 val controllerComponents: MessagesControllerComponents,
-                               ) extends FrontendBaseController with I18nSupport {
+class AccessDeniedExcludedController @Inject()(
+                                                override val messagesApi: MessagesApi,
+                                                cc: AuthenticatedControllerComponents,
+                                                view: AccessDeniedExcludedView
+                                              ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = Action { _ =>
-    Redirect(routes.MoveCountryController.onPageLoad())
+  protected val controllerComponents: MessagesControllerComponents = cc
+
+  def onPageLoad: Action[AnyContent] = (cc.identify andThen cc.getData) {
+    implicit request =>
+      Ok(view())
   }
 }

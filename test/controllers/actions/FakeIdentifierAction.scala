@@ -16,18 +16,23 @@
 
 package controllers.actions
 
-import javax.inject.Inject
+import models.etmp.EtmpDisplayRegistration
 import models.requests.IdentifierRequest
 import play.api.mvc.*
 import uk.gov.hmrc.auth.core.Enrolments
 import uk.gov.hmrc.domain.Vrn
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class FakeIdentifierAction @Inject()(bodyParsers: PlayBodyParsers) extends IdentifierAction {
 
+  private val etmpDisplayRegistration: EtmpDisplayRegistration = EtmpDisplayRegistration(
+    exclusions = Seq.empty
+  )
+
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
-    block(IdentifierRequest(request, "id", Enrolments(Set.empty), Vrn("123456789"), "IN9001234567"))
+    block(IdentifierRequest(request, "id", Enrolments(Set.empty), Vrn("123456789"), "IN9001234567", etmpDisplayRegistration))
 
   override def parser: BodyParser[AnyContent] =
     bodyParsers.default

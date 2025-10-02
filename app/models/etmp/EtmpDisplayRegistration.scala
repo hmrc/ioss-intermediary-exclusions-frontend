@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package object pages {
+package models.etmp
 
-  implicit class RecoveryOps(val a: Option[Page]) {
+import play.api.libs.json.{Json, OFormat}
 
-    def orRecover: Page =
-      a.getOrElse(JourneyRecoveryPage)
-  }
+case class EtmpDisplayRegistration(
+                                    exclusions: Seq[EtmpExclusion]
+                                  )
+
+object EtmpDisplayRegistration {
+  
+  implicit val format: OFormat[EtmpDisplayRegistration] = Json.format[EtmpDisplayRegistration]
 }

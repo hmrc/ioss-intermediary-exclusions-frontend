@@ -19,7 +19,7 @@ package controllers.actions
 import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.http.FileMimeTypes
 import play.api.i18n.{Langs, MessagesApi}
-import play.api.mvc.{ActionBuilder, AnyContent, DefaultActionBuilder, MessagesActionBuilder, MessagesControllerComponents, PlayBodyParsers}
+import play.api.mvc.*
 import repositories.SessionRepository
 
 import javax.inject.Inject
@@ -37,16 +37,17 @@ trait AuthenticatedControllerComponents extends MessagesControllerComponents {
 
   def requireData: DataRequiredAction
 
+  def checkIntermediaryExcluded: CheckIntermediaryExcludedFilter
+
   def identifyAndGetData: ActionBuilder[DataRequest, AnyContent] =
-    actionBuilder andThen
-      identify andThen
-      getData andThen
+    identifyAndGetOptionalData andThen
       requireData
 
   def identifyAndGetOptionalData: ActionBuilder[OptionalDataRequest, AnyContent] =
     actionBuilder andThen
       identify andThen
-      getData
+      getData andThen
+      checkIntermediaryExcluded()
 
 }
 
@@ -61,5 +62,6 @@ case class DefaultAuthenticatedControllerComponents @Inject()(
                                                                sessionRepository: SessionRepository,
                                                                identify: IdentifierAction,
                                                                getData: DataRetrievalAction,
-                                                               requireData: DataRequiredAction
+                                                               requireData: DataRequiredAction,
+                                                               checkIntermediaryExcluded: CheckIntermediaryExcludedFilter
                                                              ) extends AuthenticatedControllerComponents

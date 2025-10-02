@@ -24,10 +24,10 @@ import views.html.CannotUseNotAnIntermediaryView
 import javax.inject.Inject
 
 class CannotUseNotAnIntermediaryController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: CannotUseNotAnIntermediaryView
-                                     ) extends FrontendBaseController with I18nSupport {
+                                                      override val messagesApi: MessagesApi,
+                                                      val controllerComponents: MessagesControllerComponents,
+                                                      view: CannotUseNotAnIntermediaryView
+                                                    ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action {
     implicit request =>
