@@ -17,8 +17,9 @@
 package controllers
 
 import base.SpecBase
+import config.FrontendAppConfig
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.CancelLeaveSchemeView
 
 class CancelLeaveSchemeControllerSpec extends SpecBase {
@@ -34,10 +35,12 @@ class CancelLeaveSchemeControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
+        val config = application.injector.instanceOf[FrontendAppConfig]
+
         val view = application.injector.instanceOf[CancelLeaveSchemeView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(intermediaryNumber)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(intermediaryNumber, config.iossYourAccountUrl)(request, messages(application)).toString
       }
     }
   }

@@ -126,4 +126,4 @@ applicationComplete.next.info.returnToAccount = Return to your account
 
 cancelLeaveScheme.title = Do you want to cancel your request to leave the IOSS scheme?
 cancelLeaveScheme.heading = Do you want to cancel your request to leave the IOSS scheme?
-cancelLeaveScheme.contact = To stay on the service, email <a class="govuk-link" href="mailto:vatoss.contact@hmrc.gov.uk">vatoss.contact@hmrc.gov.uk</a> and quote your Ioss intermediary number: {0}
+cancelLeaveScheme.contact = To stay on the service, email <a class="govuk-link" href="mailto:vatoss.contact@hmrc.gov.uk">vatoss.contact@hmrc.gov.uk</a> and quote your Ioss intermediary number: <strong>{0}</strong>

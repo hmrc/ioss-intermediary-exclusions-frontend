@@ -19,11 +19,17 @@
         govukButton: GovukButton
 )
 
-@(intermediaryNumber: String)(implicit request: Request[_], messages: Messages)
+@(intermediaryNumber: String, yourAccountUrl: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("cancelLeaveScheme.title"))) {
 
     <h1 class="govuk-heading-l">@messages("cancelLeaveScheme.heading")</h1>
 
     <p class="govuk-body">@Html(messages("cancelLeaveScheme.contact", intermediaryNumber))</p>
+
+    <p class="govuk-body">
+        <a href="@yourAccountUrl" class="govuk-link govuk-link--no-visited-state">
+            @messages("applicationComplete.next.info.returnToAccount")
+        </a>
+    </p>
 }

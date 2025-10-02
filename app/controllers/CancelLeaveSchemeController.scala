@@ -16,7 +16,9 @@
 
 package controllers
 
-import controllers.actions._
+import config.FrontendAppConfig
+import controllers.actions.*
+
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -28,13 +30,14 @@ class CancelLeaveSchemeController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        val controllerComponents: MessagesControllerComponents,
-                                       view: CancelLeaveSchemeView
+                                       view: CancelLeaveSchemeView,
+                                       config: FrontendAppConfig
                                      ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData) {
     implicit request =>
       
       val intermediaryNumber = request.intermediaryNumber
-      Ok(view(intermediaryNumber))
+      Ok(view(intermediaryNumber, config.iossYourAccountUrl))
   }
 }
