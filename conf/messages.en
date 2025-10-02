@@ -123,3 +123,7 @@ applicationComplete.next.info.bullet2 = pay any VAT you still owe
 applicationComplete.next.info.bottom.p1 = To ensure continuous use of the scheme, you must register as an intermediary in {0} by <strong>{1}</strong>. You must also register any clients by then.
 applicationComplete.next.info.bottom.p2 = If you wish to cancel this, you must contact <a class="govuk-link" href="mailto:vatoss.contact@hmrc.gov.uk">vatoss.contact@hmrc.gov.uk</a> by <strong>{0}</strong>
 applicationComplete.next.info.returnToAccount = Return to your account
+
+cancelLeaveScheme.title = Do you want to cancel your request to leave the IOSS scheme?
+cancelLeaveScheme.heading = Do you want to cancel your request to leave the IOSS scheme?
+cancelLeaveScheme.contact = To stay on the service, email <a class="govuk-link" href="mailto:vatoss.contact@hmrc.gov.uk">vatoss.contact@hmrc.gov.uk</a> and quote your Ioss intermediary number: {0}
