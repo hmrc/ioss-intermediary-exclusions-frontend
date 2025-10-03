@@ -59,7 +59,7 @@ class CheckIntermediaryExcludedFilterSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = OptionalDataRequest(FakeRequest(), userAnswersId, None, nonExcludedIntermediaryRegistration)
+        val request = OptionalDataRequest(FakeRequest(), userAnswersId, None, intermediaryNumber, nonExcludedIntermediaryRegistration)
 
         val controller = new Harness()
 
@@ -91,7 +91,7 @@ class CheckIntermediaryExcludedFilterSpec extends SpecBase {
           .build()
 
         running(application) {
-          val request = OptionalDataRequest(FakeRequest(), userAnswersId, None, excludedIntermediaryRegistration)
+          val request = OptionalDataRequest(FakeRequest(), userAnswersId, None, intermediaryNumber, excludedIntermediaryRegistration)
 
           val controller = new Harness()
 
@@ -123,7 +123,7 @@ class CheckIntermediaryExcludedFilterSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = OptionalDataRequest(FakeRequest(), userAnswersId, None, excludedIntermediaryRegistration)
+        val request = OptionalDataRequest(FakeRequest(), userAnswersId, None, intermediaryNumber, excludedIntermediaryRegistration)
 
         val controller = new Harness()
 
