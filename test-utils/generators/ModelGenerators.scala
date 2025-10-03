@@ -16,14 +16,48 @@
 
 package generators
 
-import models._
+import models.*
+import models.etmp.{EtmpDisplayRegistration, EtmpExclusion, EtmpExclusionReason}
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
+
+import java.time.LocalDate
 
 trait ModelGenerators {
 
   implicit lazy val arbitraryCountry: Arbitrary[Country] = {
     Arbitrary {
       Gen.oneOf(Country.euCountries)
+    }
+  }
+  
+  implicit lazy val arbitraryEtmpExclusion: Arbitrary[EtmpExclusion] = {
+    Arbitrary {
+      for {
+        exclusionReason <- Gen.oneOf(EtmpExclusionReason.values)
+        effectiveDate <- arbitrary[LocalDate]
+        decisionDate <- arbitrary[LocalDate]
+        quarantine <- arbitrary[Boolean]
+      } yield {
+        EtmpExclusion(
+          exclusionReason = exclusionReason,
+          effectiveDate = effectiveDate,
+          decisionDate = decisionDate,
+          quarantine = quarantine
+        )
+      }
+    }
+  }
+
+  implicit lazy val arbitraryEtmpDisplayRegistration: Arbitrary[EtmpDisplayRegistration] = {
+    Arbitrary {
+      for {
+        exclusions <- Gen.listOfN(1, arbitraryEtmpExclusion.arbitrary)
+      } yield {
+        EtmpDisplayRegistration(
+          exclusions = exclusions
+        )
+      }
     }
   }
 }

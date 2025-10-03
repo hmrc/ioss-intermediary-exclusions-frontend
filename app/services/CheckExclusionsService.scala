@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package object pages {
+package services
 
-  implicit class RecoveryOps(val a: Option[Page]) {
+import models.etmp.EtmpExclusion
+import models.etmp.EtmpExclusionReason.Reversal
 
-    def orRecover: Page =
-      a.getOrElse(JourneyRecoveryPage)
+class CheckExclusionsService {
+
+  def getLastExclusionWithoutReversal(exclusions: List[EtmpExclusion]): Option[EtmpExclusion] = {
+    exclusions.headOption.filterNot(_.exclusionReason == Reversal)
   }
 }

@@ -44,3 +44,5 @@ POST       /exclusions-stopped-using-service-date        controllers.StoppedUsin
 GET        /exclusions-request-received                  controllers.ApplicationCompleteController.onPageLoad()
 
 GET        /cancel-leave-scheme                          controllers.CancelLeaveSchemeController.onPageLoad()
+
+GET        /no-access-excluded                           controllers.AccessDeniedExcludedController.onPageLoad()

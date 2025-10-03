@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package object pages {
+package utils
 
-  implicit class RecoveryOps(val a: Option[Page]) {
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
-    def orRecover: Page =
-      a.getOrElse(JourneyRecoveryPage)
-  }
+object Formatters {
+
+  val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z")
+    .withLocale(Locale.UK)
+    .withZone(ZoneId.of("GMT"))
 }

@@ -19,33 +19,29 @@ package controllers
 import controllers.actions.*
 import forms.EuCountryFormProvider
 import models.{Country, UserAnswers}
-
-import javax.inject.Inject
 import pages.{EuCountryPage, EuVatNumberPage, Waypoints}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.EuCountryView
 import utils.FutureSyntax.FutureOps
+import views.html.EuCountryView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EuCountryController @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: EuCountryFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        view: EuCountryView
-                                    )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                     override val messagesApi: MessagesApi,
+                                     cc: AuthenticatedControllerComponents,
+                                     formProvider: EuCountryFormProvider,
+                                     view: EuCountryView
+                                   )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+
+  protected val controllerComponents: MessagesControllerComponents = cc
 
   val form: Form[Country] = formProvider()
 
-  def onPageLoad(waypoints: Waypoints): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(waypoints: Waypoints): Action[AnyContent] = cc.identifyAndGetData {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(EuCountryPage) match {
@@ -56,18 +52,18 @@ class EuCountryController @Inject()(
       Ok(view(preparedForm, waypoints))
   }
 
-  def onSubmit(waypoints: Waypoints): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(waypoints: Waypoints): Action[AnyContent] = cc.identifyAndGetData.async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, waypoints))),
+          BadRequest(view(formWithErrors, waypoints)).toFuture,
 
         value =>
           for {
             updatedAnswersEuVatNumber <- updateEuVatNumberPage(request.userAnswers, value)
             updatedAnswers <- Future.fromTry(updatedAnswersEuVatNumber.set(EuCountryPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            _ <- cc.sessionRepository.set(updatedAnswers)
           } yield Redirect(EuCountryPage.navigate(waypoints, request.userAnswers, updatedAnswers).route)
       )
   }
