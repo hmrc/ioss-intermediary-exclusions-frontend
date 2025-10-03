@@ -17,39 +17,37 @@
 package controllers.actions
 
 import logging.Logging
-import models.etmp.EtmpExclusion
-import models.etmp.EtmpExclusionReason.{NoLongerSupplies, TransferringMSID, VoluntarilyLeaves}
 import models.requests.OptionalDataRequest
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionFilter, Result}
+import services.CheckExclusionsService
 import utils.FutureSyntax.FutureOps
 
-import java.time.{Clock, LocalDate}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CheckIntermediaryExcludedFilterImpl @Inject()(clock: Clock)(implicit val executionContext: ExecutionContext)
+class CheckIntermediaryExcludedFilterImpl @Inject()(
+                                                     checkExclusionsService: CheckExclusionsService
+                                                   )(implicit val executionContext: ExecutionContext)
   extends ActionFilter[OptionalDataRequest] with Logging {
 
   override protected def filter[A](request: OptionalDataRequest[A]): Future[Option[Result]] = {
-    val maybeEtmpExclusion: Option[EtmpExclusion] = request.displayRegistration.exclusions.headOption
 
-    maybeEtmpExclusion match {
-      case None =>
-        None.toFuture
+    val maybeEtmpExclusion: Boolean = checkExclusionsService
+      .getLastExclusionWithoutReversal(request.displayRegistration.exclusions.toList).isDefined
 
-      case Some(etmpExclusion) if Seq(NoLongerSupplies, VoluntarilyLeaves, TransferringMSID).contains(etmpExclusion.exclusionReason) &&
-        LocalDate.now(clock).isBefore(etmpExclusion.effectiveDate) =>
-        None.toFuture
-
-      case _ =>
-        Some(Redirect(controllers.routes.AccessDeniedExcludedController.onPageLoad().url)).toFuture
+    if (maybeEtmpExclusion) {
+      Some(Redirect(controllers.routes.AccessDeniedExcludedController.onPageLoad().url)).toFuture
+    } else {
+      None.toFuture
     }
   }
 }
 
-class CheckIntermediaryExcludedFilter @Inject()(clock: Clock)(implicit ec: ExecutionContext) {
+class CheckIntermediaryExcludedFilter @Inject()(
+                                                 checkExclusionsService: CheckExclusionsService
+                                               )(implicit ec: ExecutionContext) {
 
   def apply(): CheckIntermediaryExcludedFilterImpl =
-    new CheckIntermediaryExcludedFilterImpl(clock)
+    new CheckIntermediaryExcludedFilterImpl(checkExclusionsService)
 }

@@ -33,7 +33,7 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.MoveDateView
 
-import java.time.{LocalDate, ZoneOffset}
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class MoveDateControllerSpec extends SpecBase with MockitoSugar {
@@ -45,7 +45,7 @@ class MoveDateControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new MoveDateFormProvider(dates)
   val form: Form[LocalDate] = formProvider()
   val emptyWaypoints: Waypoints = EmptyWaypoints
-  val validAnswer: LocalDate = LocalDate.now(ZoneOffset.UTC)
+  val validAnswer: LocalDate = LocalDate.now(stubClockAtArbitraryDate)
 
   lazy val moveDateRoute: String = routes.MoveDateController.onPageLoad(emptyWaypoints).url
 

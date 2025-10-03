@@ -18,13 +18,18 @@ package controllers.actions
 
 import base.SpecBase
 import controllers.routes
-import models.etmp.EtmpExclusionReason.{CeasedTrade, FailsToComply, NoLongerMeetsConditions, NoLongerSupplies, Reversal, TransferringMSID, VoluntarilyLeaves}
-import models.etmp.{EtmpDisplayRegistration, EtmpExclusion}
+import models.etmp.EtmpExclusionReason.Reversal
+import models.etmp.{EtmpDisplayRegistration, EtmpExclusion, EtmpExclusionReason}
 import models.requests.OptionalDataRequest
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{times, verify, when}
+import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.inject.bind
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import play.api.test.FakeRequest
 import play.api.test.Helpers.running
+import services.CheckExclusionsService
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -34,7 +39,9 @@ class CheckIntermediaryExcludedFilterSpec extends SpecBase {
 
   private val etmpDisplayRegistration: EtmpDisplayRegistration = arbitraryEtmpDisplayRegistration.arbitrary.sample.value
 
-  class Harness() extends CheckIntermediaryExcludedFilterImpl(clock = stubClockAtArbitraryDate) {
+  private val mockCheckExclusionsService: CheckExclusionsService = mock[CheckExclusionsService]
+
+  class Harness() extends CheckIntermediaryExcludedFilterImpl(mockCheckExclusionsService) {
     def callFilter(request: OptionalDataRequest[_]): Future[Option[Result]] = filter(request)
   }
 
@@ -45,7 +52,11 @@ class CheckIntermediaryExcludedFilterSpec extends SpecBase {
       val nonExcludedIntermediaryRegistration = etmpDisplayRegistration
         .copy(exclusions = Seq.empty)
 
-      val application = applicationBuilder().build()
+      when(mockCheckExclusionsService.getLastExclusionWithoutReversal(any())) thenReturn None
+
+      val application = applicationBuilder()
+        .overrides(bind[CheckExclusionsService].toInstance(mockCheckExclusionsService))
+        .build()
 
       running(application) {
         val request = OptionalDataRequest(FakeRequest(), userAnswersId, None, nonExcludedIntermediaryRegistration)
@@ -55,40 +66,12 @@ class CheckIntermediaryExcludedFilterSpec extends SpecBase {
         val result = controller.callFilter(request).futureValue
 
         result must not be defined
+        verify(mockCheckExclusionsService, times(1)).getLastExclusionWithoutReversal(eqTo(nonExcludedIntermediaryRegistration.exclusions.toList))
       }
     }
 
-    Seq(NoLongerSupplies, VoluntarilyLeaves, TransferringMSID).foreach { exclusionReason =>
-
-      s"must return None when there is an exclusion present with exclusion reason $exclusionReason " +
-        s"and effective date is before today" in {
-
-        val effectiveDate: LocalDate = LocalDate.now(stubClockAtArbitraryDate).plusDays(1)
-
-        val etmpExclusion: EtmpExclusion = EtmpExclusion(
-          exclusionReason = exclusionReason,
-          effectiveDate = effectiveDate,
-          decisionDate = LocalDate.now(stubClockAtArbitraryDate),
-          quarantine = false
-        )
-        val nonExcludedIntermediaryRegistration = etmpDisplayRegistration
-          .copy(exclusions = Seq(etmpExclusion))
-
-        val application = applicationBuilder().build()
-
-        running(application) {
-          val request = OptionalDataRequest(FakeRequest(), userAnswersId, None, nonExcludedIntermediaryRegistration)
-
-          val controller = new Harness()
-
-          val result = controller.callFilter(request).futureValue
-
-          result must not be defined
-        }
-      }
-
-      s"must redirect to Access Denied Page when there is an exclusion present with exclusion reason $exclusionReason " +
-        s"and effective date is on or after today" in {
+    EtmpExclusionReason.values.filterNot(_.eq(Reversal)).foreach { exclusionReason =>
+      s"must redirect to Access Denied Page when there is an exclusion present for exclusion reason: $exclusionReason" in {
 
         val effectiveDate: LocalDate = LocalDate.now(stubClockAtArbitraryDate)
 
@@ -101,7 +84,11 @@ class CheckIntermediaryExcludedFilterSpec extends SpecBase {
         val excludedIntermediaryRegistration = etmpDisplayRegistration
           .copy(exclusions = Seq(etmpExclusion))
 
-        val application = applicationBuilder().build()
+        when(mockCheckExclusionsService.getLastExclusionWithoutReversal(any())) thenReturn Some(List(etmpExclusion))
+
+        val application = applicationBuilder()
+          .overrides(bind[CheckExclusionsService].toInstance(mockCheckExclusionsService))
+          .build()
 
         running(application) {
           val request = OptionalDataRequest(FakeRequest(), userAnswersId, None, excludedIntermediaryRegistration)
@@ -111,36 +98,39 @@ class CheckIntermediaryExcludedFilterSpec extends SpecBase {
           val result = controller.callFilter(request).futureValue
 
           result.value `mustBe` Redirect(routes.AccessDeniedExcludedController.onPageLoad())
+          verify(mockCheckExclusionsService, times(1)).getLastExclusionWithoutReversal(eqTo(Seq(etmpExclusion).toList))
         }
       }
     }
 
-    Seq(Reversal, CeasedTrade, NoLongerMeetsConditions, FailsToComply).foreach { exclusionReason =>
+    "must return None when there is an exclusion present for exclusion reason Reversal" in {
 
-      s"must redirect to Access Denied Page when there is an exclusion present but exclusion reason is $exclusionReason" in {
+      val effectiveDate: LocalDate = LocalDate.now(stubClockAtArbitraryDate)
 
-        val effectiveDate: LocalDate = LocalDate.now(stubClockAtArbitraryDate)
+      val etmpExclusion: EtmpExclusion = EtmpExclusion(
+        exclusionReason = Reversal,
+        effectiveDate = effectiveDate,
+        decisionDate = LocalDate.now(stubClockAtArbitraryDate),
+        quarantine = false
+      )
+      val excludedIntermediaryRegistration = etmpDisplayRegistration
+        .copy(exclusions = Seq(etmpExclusion))
 
-        val etmpExclusion: EtmpExclusion = EtmpExclusion(
-          exclusionReason = exclusionReason,
-          effectiveDate = effectiveDate,
-          decisionDate = LocalDate.now(stubClockAtArbitraryDate),
-          quarantine = false
-        )
-        val excludedIntermediaryRegistration = etmpDisplayRegistration
-          .copy(exclusions = Seq(etmpExclusion))
+      when(mockCheckExclusionsService.getLastExclusionWithoutReversal(any())) thenReturn Some(List(etmpExclusion))
 
-        val application = applicationBuilder().build()
+      val application = applicationBuilder()
+        .overrides(bind[CheckExclusionsService].toInstance(mockCheckExclusionsService))
+        .build()
 
-        running(application) {
-          val request = OptionalDataRequest(FakeRequest(), userAnswersId, None, excludedIntermediaryRegistration)
+      running(application) {
+        val request = OptionalDataRequest(FakeRequest(), userAnswersId, None, excludedIntermediaryRegistration)
 
-          val controller = new Harness()
+        val controller = new Harness()
 
-          val result = controller.callFilter(request).futureValue
+        val result = controller.callFilter(request).futureValue
 
-          result.value `mustBe` Redirect(routes.AccessDeniedExcludedController.onPageLoad())
-        }
+        result.value `mustBe` Redirect(routes.AccessDeniedExcludedController.onPageLoad())
+        verify(mockCheckExclusionsService, times(1)).getLastExclusionWithoutReversal(eqTo(Seq(etmpExclusion).toList))
       }
     }
   }

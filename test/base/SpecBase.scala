@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions.*
-import date.Dates
+import date.{Dates, Today, TodayImpl}
 import generators.Generators
 import models.CountryWithValidationDetails.euCountriesWithVRNValidationRules
 import models.{CheckMode, Country, CountryWithValidationDetails, UserAnswers}
@@ -90,7 +90,8 @@ trait SpecBase
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
-        bind[Clock].toInstance(clockToBind)
+        bind[Clock].toInstance(clockToBind),
+        bind[Today].toInstance(new TodayImpl(clockToBind))
       )
   }
 
