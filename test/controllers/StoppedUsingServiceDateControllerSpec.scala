@@ -33,7 +33,7 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.StoppedUsingServiceDateView
 
-import java.time.{LocalDate, ZoneOffset}
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class StoppedUsingServiceDateControllerSpec extends SpecBase with MockitoSugar {
@@ -95,29 +95,28 @@ class StoppedUsingServiceDateControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    // TODO -> Uncomment when VEI-544 implemented
-//    "must redirect to the next page when valid data is submitted" in {
-//
-//      val mockSessionRepository = mock[SessionRepository]
-//
-//      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-//
-//      val application =
-//        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-//          .overrides(
-//            bind[SessionRepository].toInstance(mockSessionRepository)
-//          )
-//          .build()
-//
-//      running(application) {
-//        val result = route(application, postRequest()).value
-//        val userAnswers = emptyUserAnswers
-//          .set(StoppedUsingServiceDatePage, validAnswer).success.value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual StoppedUsingServiceDatePage.navigate(emptyWaypoints, emptyUserAnswers, userAnswers).url
-//      }
-//    }
+    "must redirect to the next page when valid data is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val result = route(application, postRequest()).value
+        val userAnswers = emptyUserAnswers
+          .set(StoppedUsingServiceDatePage, validAnswer).success.value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual StoppedUsingServiceDatePage.navigate(emptyWaypoints, emptyUserAnswers, userAnswers).url
+      }
+    }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 

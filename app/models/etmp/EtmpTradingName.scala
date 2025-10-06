@@ -18,12 +18,9 @@ package models.etmp
 
 import play.api.libs.json.{Json, OFormat}
 
-case class EtmpDisplayRegistration(
-                                    exclusions: Seq[EtmpExclusion],
-                                    schemeDetails: EtmpDisplaySchemeDetails,
-                                  )
+case class EtmpTradingName(tradingName: String)
 
-object EtmpDisplayRegistration {
-  
-  implicit val format: OFormat[EtmpDisplayRegistration] = Json.format[EtmpDisplayRegistration]
+object EtmpTradingName {
+
+  implicit val format: OFormat[EtmpTradingName] = Json.format[EtmpTradingName]
 }

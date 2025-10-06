@@ -43,7 +43,7 @@ class StoppedUsingServiceDateController @Inject()(
   def onPageLoad(waypoints: Waypoints): Action[AnyContent] = cc.identifyAndGetData {
     implicit request =>
 
-      val commencementDate = LocalDate.parse("2025-06-03") //TODO VEI-544 get schemeDetails from registrationConnector for commencement date when viewReg is implemented
+      val commencementDate = LocalDate.parse(request.displayRegistration.schemeDetails.commencementDate)
       val form = formProvider(dates.today.date, commencementDate)
 
       val preparedForm = request.userAnswers.get(StoppedUsingServiceDatePage) match {
@@ -57,7 +57,7 @@ class StoppedUsingServiceDateController @Inject()(
   def onSubmit(waypoints: Waypoints): Action[AnyContent] = cc.identifyAndGetData.async {
     implicit request =>
 
-      val commencementDate = LocalDate.parse("2025-06-03") //TODO VEI-544 get schemeDetails from registrationConnector for commencement date when viewReg is implemented
+      val commencementDate = LocalDate.parse(request.displayRegistration.schemeDetails.commencementDate)
       val form = formProvider.apply(dates.today.date, commencementDate)
 
       form.bindFromRequest().fold(

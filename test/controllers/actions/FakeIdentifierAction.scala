@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import models.etmp.EtmpDisplayRegistration
+import models.etmp.{EtmpDisplayRegistration, EtmpDisplaySchemeDetails}
 import models.requests.IdentifierRequest
 import play.api.mvc.*
 import uk.gov.hmrc.auth.core.Enrolments
@@ -27,8 +27,20 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class FakeIdentifierAction @Inject()(bodyParsers: PlayBodyParsers) extends IdentifierAction {
 
+  private val etmpDisplaySchemeDetails: EtmpDisplaySchemeDetails = EtmpDisplaySchemeDetails(
+    commencementDate = "2023-01-01",
+    euRegistrationDetails = Seq.empty,
+    contactName = "John Doe",
+    businessTelephoneNumber = "0123456789",
+    businessEmailId = "test@example.com",
+    unusableStatus = false,
+    nonCompliantReturns = None,
+    nonCompliantPayments = None
+  )
+
   private val etmpDisplayRegistration: EtmpDisplayRegistration = EtmpDisplayRegistration(
-    exclusions = Seq.empty
+    exclusions = Seq.empty,
+    schemeDetails = etmpDisplaySchemeDetails
   )
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
