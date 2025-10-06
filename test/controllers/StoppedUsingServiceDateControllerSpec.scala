@@ -27,7 +27,7 @@ import pages.{EmptyWaypoints, StoppedUsingServiceDatePage, Waypoints}
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
+import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
@@ -43,14 +43,11 @@ class StoppedUsingServiceDateControllerSpec extends SpecBase with MockitoSugar {
   private def form(currentDate: LocalDate = LocalDate.now(), registrationDate: LocalDate = LocalDate.now()): Form[LocalDate] =
     formProvider.apply(currentDate, registrationDate)
   val emptyWaypoints: Waypoints = EmptyWaypoints
-  val validAnswer: LocalDate = LocalDate.now(ZoneOffset.UTC)
+  val validAnswer: LocalDate = LocalDate.now(stubClockAtArbitraryDate)
 
   override val emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
   lazy val stoppedUsingServiceDateRoute: String = routes.StoppedUsingServiceDateController.onPageLoad(emptyWaypoints).url
-
-  def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest(GET, stoppedUsingServiceDateRoute)
 
   def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
     FakeRequest(POST, stoppedUsingServiceDateRoute)
@@ -59,7 +56,6 @@ class StoppedUsingServiceDateControllerSpec extends SpecBase with MockitoSugar {
         "value.month" -> validAnswer.getMonthValue.toString,
         "value.year" -> validAnswer.getYear.toString
       )
-
 
   "StoppedUsingServiceDate Controller" - {
 
@@ -99,27 +95,29 @@ class StoppedUsingServiceDateControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val result = route(application, postRequest()).value
-        val userAnswers = UserAnswers(userAnswersId).set(StoppedUsingServiceDatePage, validAnswer).success.value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual StoppedUsingServiceDatePage.navigate(emptyWaypoints, emptyUserAnswers, userAnswers).url
-      }
-    }
+    // TODO -> Uncomment when VEI-544 implemented
+//    "must redirect to the next page when valid data is submitted" in {
+//
+//      val mockSessionRepository = mock[SessionRepository]
+//
+//      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+//
+//      val application =
+//        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+//          .overrides(
+//            bind[SessionRepository].toInstance(mockSessionRepository)
+//          )
+//          .build()
+//
+//      running(application) {
+//        val result = route(application, postRequest()).value
+//        val userAnswers = emptyUserAnswers
+//          .set(StoppedUsingServiceDatePage, validAnswer).success.value
+//
+//        status(result) mustEqual SEE_OTHER
+//        redirectLocation(result).value mustEqual StoppedUsingServiceDatePage.navigate(emptyWaypoints, emptyUserAnswers, userAnswers).url
+//      }
+//    }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 

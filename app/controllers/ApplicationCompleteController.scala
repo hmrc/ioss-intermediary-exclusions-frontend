@@ -21,26 +21,24 @@ import controllers.actions.*
 import date.Dates
 import models.requests.DataRequest
 import pages.{EuCountryPage, MoveCountryPage, MoveDatePage, StoppedUsingServiceDatePage}
-
-import javax.inject.Inject
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ApplicationCompleteView
 
+import javax.inject.Inject
 
 class ApplicationCompleteController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: ApplicationCompleteView,
-                                       dates: Dates,
-                                       config: FrontendAppConfig,
-                                     ) extends FrontendBaseController with I18nSupport {
+                                               override val messagesApi: MessagesApi,
+                                               cc: AuthenticatedControllerComponents,
+                                               view: ApplicationCompleteView,
+                                               dates: Dates,
+                                               config: FrontendAppConfig,
+                                             ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  protected val controllerComponents: MessagesControllerComponents = cc
+
+  def onPageLoad: Action[AnyContent] = cc.identifyAndGetData {
     implicit request =>
 
       request.userAnswers.get(MoveCountryPage).flatMap { isMovingCountry =>

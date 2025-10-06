@@ -19,19 +19,21 @@ package controllers.actions
 import com.google.inject.Inject
 import config.Constants.intermediaryEnrolmentKey
 import config.FrontendAppConfig
+import connectors.RegistrationConnector
 import controllers.routes
 import logging.Logging
+import models.etmp.EtmpDisplayRegistration
 import models.requests.{IdentifierRequest, SessionRequest}
-import play.api.mvc.Results.*
 import play.api.mvc.*
+import play.api.mvc.Results.*
 import services.UrlBuilderService
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.domain.Vrn
 import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
-import uk.gov.hmrc.play.bootstrap.binders.{AbsoluteWithHostnameFromAllowlist, OnlyRelative}
 import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl.idFunctor
+import uk.gov.hmrc.play.bootstrap.binders.{AbsoluteWithHostnameFromAllowlist, OnlyRelative}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.FutureSyntax.FutureOps
 
@@ -43,7 +45,8 @@ class AuthenticatedIdentifierAction @Inject()(
                                                override val authConnector: AuthConnector,
                                                config: FrontendAppConfig,
                                                val parser: BodyParsers.Default,
-                                               urlBuilderService: UrlBuilderService
+                                               urlBuilderService: UrlBuilderService,
+                                               registrationConnector: RegistrationConnector
                                              )
                                              (implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions with Logging {
 
@@ -57,8 +60,10 @@ class AuthenticatedIdentifierAction @Inject()(
       case Some(internalId) ~ enrolments =>
         findIntermediaryNumberFromEnrolments(enrolments) match {
           case Some(intermediaryNumber) =>
-            val vrn = findVrnFromEnrolments(enrolments)
-                block(IdentifierRequest(request, internalId, enrolments, vrn, intermediaryNumber))
+            getDisplayRegistration(intermediaryNumber).flatMap { displayRegistration =>
+              val vrn = findVrnFromEnrolments(enrolments)
+              block(IdentifierRequest(request, internalId, enrolments, vrn, intermediaryNumber, displayRegistration))
+            }
 
           case None =>
             Future.successful(Redirect(routes.CannotUseNotAnIntermediaryController.onPageLoad()))
@@ -86,6 +91,17 @@ class AuthenticatedIdentifierAction @Inject()(
     enrolments.enrolments
       .find(_.key == config.intermediaryEnrolment)
       .flatMap(_.identifiers.find(id => id.key == intermediaryEnrolmentKey && id.value.nonEmpty).map(_.value))
+  }
+
+  private def getDisplayRegistration(intermediaryNumber: String)(implicit hc: HeaderCarrier): Future[EtmpDisplayRegistration] = {
+    registrationConnector.getDisplayRegistration(intermediaryNumber).map {
+      case Right(etmpDisplayRegistration) => etmpDisplayRegistration
+      case Left(error) =>
+        val errorMessage = s"There was an error retrieving display registration from ETMP" +
+          s"with error: ${error.body}."
+        logger.error(errorMessage)
+        throw Exception(errorMessage)
+    }
   }
 }
 

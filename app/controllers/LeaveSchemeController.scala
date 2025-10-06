@@ -19,33 +19,30 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions.*
 import forms.LeaveSchemeFormProvider
-
-import javax.inject.Inject
 import pages.{LeaveSchemePage, StoppedUsingServiceDatePage, Waypoints}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.FutureSyntax.FutureOps
 import views.html.LeaveSchemeView
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class LeaveSchemeController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         formProvider: LeaveSchemeFormProvider,
-                                         config: FrontendAppConfig,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: LeaveSchemeView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                       override val messagesApi: MessagesApi,
+                                       cc: AuthenticatedControllerComponents,
+                                       formProvider: LeaveSchemeFormProvider,
+                                       config: FrontendAppConfig,
+                                       view: LeaveSchemeView
+                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+
+  protected val controllerComponents: MessagesControllerComponents = cc
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(waypoints: Waypoints): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(waypoints: Waypoints): Action[AnyContent] = cc.identifyAndGetData {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(LeaveSchemePage) match {
@@ -56,17 +53,17 @@ class LeaveSchemeController @Inject()(
       Ok(view(preparedForm, waypoints))
   }
 
-  def onSubmit(waypoints: Waypoints): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(waypoints: Waypoints): Action[AnyContent] = cc.identifyAndGetData.async {
     implicit request =>
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, waypoints))),
+          BadRequest(view(formWithErrors, waypoints)).toFuture,
 
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaveSchemePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            _ <- cc.sessionRepository.set(updatedAnswers)
           } yield {
             if (value) {
               Redirect(StoppedUsingServiceDatePage.route(waypoints).url)

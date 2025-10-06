@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package object pages {
+@this(
+        layout: templates.Layout
+)
 
-  implicit class RecoveryOps(val a: Option[Page]) {
+@()(implicit request: Request[_], messages: Messages)
 
-    def orRecover: Page =
-      a.getOrElse(JourneyRecoveryPage)
-  }
+@layout(pageTitle = titleNoForm(messages("accessDeniedExcluded.title"))) {
+
+    <h1 class="govuk-heading-l">@messages("accessDeniedExcluded.heading")</h1>
 }

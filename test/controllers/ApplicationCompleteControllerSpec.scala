@@ -18,22 +18,18 @@ package controllers
 
 import base.SpecBase
 import config.FrontendAppConfig
-import date.{Dates, Today}
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar.mock
+import date.Dates
 import pages.{EuCountryPage, MoveCountryPage, MoveDatePage, StoppedUsingServiceDatePage}
-import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.ApplicationCompleteView
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate, ZoneId}
 
 class ApplicationCompleteControllerSpec extends SpecBase {
 
   val today: LocalDate = LocalDate.of(2024, 1, 25)
-  val mockToday: Today = mock[Today]
-  when(mockToday.date).thenReturn(today)
+  val clock: Clock = Clock.fixed(today.atStartOfDay(ZoneId.systemDefault).toInstant, ZoneId.systemDefault())
 
   "ApplicationComplete Controller" - {
 
@@ -43,14 +39,12 @@ class ApplicationCompleteControllerSpec extends SpecBase {
 
         val moveDate = today.plusDays(1)
 
-
         val userAnswers = emptyUserAnswers
           .set(MoveCountryPage, true).success.get
           .set(EuCountryPage, country).success.get
           .set(MoveDatePage, moveDate).success.get
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[Today].toInstance(mockToday))
+        val application = applicationBuilder(userAnswers = Some(userAnswers), clock = Some(clock))
           .build()
 
         running(application) {
@@ -88,8 +82,7 @@ class ApplicationCompleteControllerSpec extends SpecBase {
           .set(MoveCountryPage, false).success.get
           .set(StoppedUsingServiceDatePage, stoppedUsingServiceDate).success.get
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[Today].toInstance(mockToday))
+        val application = applicationBuilder(userAnswers = Some(userAnswers), clock = Some(clock))
           .build()
 
         running(application) {
