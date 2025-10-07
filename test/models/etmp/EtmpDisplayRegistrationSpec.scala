@@ -29,10 +29,12 @@ class EtmpDisplayRegistrationSpec extends SpecBase {
 
       val json = Json.obj(
         "exclusions" -> etmpDisplayRegistration.exclusions,
+        "schemeDetails" -> etmpDisplayRegistration.schemeDetails
       )
 
       val expectedResult = EtmpDisplayRegistration(
-        exclusions = etmpDisplayRegistration.exclusions
+        exclusions = etmpDisplayRegistration.exclusions,
+        schemeDetails = etmpDisplayRegistration.schemeDetails
       )
 
       json.validate[EtmpDisplayRegistration] `mustBe` JsSuccess(expectedResult)
@@ -41,11 +43,13 @@ class EtmpDisplayRegistrationSpec extends SpecBase {
     "must deserialise from EtmpDisplayRegistration" in {
 
       val fromEtmpDisplayRegistration = EtmpDisplayRegistration(
-        exclusions = etmpDisplayRegistration.exclusions
+        exclusions = etmpDisplayRegistration.exclusions,
+        schemeDetails = etmpDisplayRegistration.schemeDetails
       )
 
       val expectedResult = Json.obj(
-        "exclusions" -> etmpDisplayRegistration.exclusions
+        "exclusions" -> etmpDisplayRegistration.exclusions,
+        "schemeDetails" -> etmpDisplayRegistration.schemeDetails,
       )
 
       Json.toJson(fromEtmpDisplayRegistration) `mustBe` expectedResult
