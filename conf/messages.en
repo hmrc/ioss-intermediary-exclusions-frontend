@@ -130,3 +130,6 @@ cancelLeaveScheme.contact = To stay on the service, email <a class="govuk-link" 
 
 accessDeniedExcluded.title = You cannot access this page
 accessDeniedExcluded.heading = You cannot access this page
+
+rejoinScheme.title = rejoinScheme
+rejoinScheme.heading = rejoinScheme
