@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package config
+package models.etmp
 
-object Constants {
-  
-  val intermediaryEnrolmentKey: String = "IntNumber"
-  val maxTradingNames: Int = 10
-  
+import play.api.libs.json.{Json, OFormat}
+
+case class EtmpOtherAddress(
+                             issuedBy: String,
+                             tradingName: Option[String],
+                             addressLine1: String,
+                             addressLine2: Option[String],
+                             townOrCity: String,
+                             regionOrState: Option[String],
+                             postcode: String
+                           )
+
+
+object EtmpOtherAddress {
+  implicit val format: OFormat[EtmpOtherAddress] = Json.format[EtmpOtherAddress]
 }

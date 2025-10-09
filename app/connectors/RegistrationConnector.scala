@@ -17,8 +17,11 @@
 package connectors
 
 import config.Service
-import connectors.RegistrationConnectorHttpParser.{EtmpDisplayRegistrationResponse, EtmpDisplayRegistrationResponseReads}
+import connectors.RegistrationConnectorHttpParser.*
+import models.etmp.amend.EtmpAmendRegistrationRequest
 import play.api.Configuration
+import play.api.libs.json.Json
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
@@ -36,4 +39,8 @@ class RegistrationConnector @Inject()(
     httpClientV2.get(url"$baseUrl/get-registration/$intermediaryNumber")
       .execute[EtmpDisplayRegistrationResponse]
   }
+  
+  def amend(registrationRequest: EtmpAmendRegistrationRequest)(implicit hc: HeaderCarrier): Future[AmendRegistrationResultResponse] =
+    httpClientV2.post(url"$baseUrl/amend").withBody(Json.toJson(registrationRequest))
+      .execute[AmendRegistrationResultResponse]
 }

@@ -36,7 +36,9 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
 import uk.gov.hmrc.domain.Vrn
 
+import java.time.format.DateTimeFormatter
 import java.time.{Clock, Instant, LocalDate, ZoneId}
+import java.util.Locale
 
 trait SpecBase
   extends AnyFreeSpec
@@ -99,4 +101,10 @@ trait SpecBase
     CountryWithValidationDetails.euCountriesWithVRNValidationRules.find(_.country.code == countryCode).map { matchedCountryRule =>
       s"$countryCode${matchedCountryRule.exampleVrn}"
     }.value
+
+
+  val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    .withLocale(Locale.UK)
+    .withZone(ZoneId.of("GMT"))
+
 }

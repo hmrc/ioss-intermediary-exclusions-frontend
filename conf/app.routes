@@ -46,3 +46,5 @@ GET        /exclusions-request-received                  controllers.Application
 GET        /cancel-leave-scheme                          controllers.CancelLeaveSchemeController.onPageLoad()
 
 GET        /no-access-excluded                           controllers.AccessDeniedExcludedController.onPageLoad()
+
+GET        /submission-failure                           controllers.SubmissionFailureController.onPageLoad()

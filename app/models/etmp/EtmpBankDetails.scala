@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package config
+package models.etmp
 
-object Constants {
-  
-  val intermediaryEnrolmentKey: String = "IntNumber"
-  val maxTradingNames: Int = 10
-  
+import models.{Bic, Iban}
+import play.api.libs.json.{Json, OFormat}
+
+case class EtmpBankDetails(accountName: String, bic: Option[Bic], iban: Iban)
+
+object EtmpBankDetails {
+
+  implicit val format: OFormat[EtmpBankDetails] = Json.format[EtmpBankDetails]
 }

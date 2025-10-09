@@ -18,7 +18,7 @@ package connectors
 
 import logging.Logging
 import models.etmp.EtmpDisplayRegistration
-import models.responses.{ErrorResponse, InternalServerError, InvalidJson}
+import models.responses.{ErrorResponse, InternalServerError, InvalidJson, UnexpectedResponseStatus}
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsSuccess}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -26,6 +26,7 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 object RegistrationConnectorHttpParser extends Logging {
 
   type EtmpDisplayRegistrationResponse = Either[ErrorResponse, EtmpDisplayRegistration]
+  type AmendRegistrationResultResponse = Either[ErrorResponse, Any]
 
   implicit object EtmpDisplayRegistrationResponseReads extends HttpReads[EtmpDisplayRegistrationResponse] {
 
@@ -44,6 +45,16 @@ object RegistrationConnectorHttpParser extends Logging {
           logger.error(s"An unknown error occurred when trying to retrieve ETMP Display Registration with status: $status " +
             s"and response body: ${response.body}")
           Left(InternalServerError)
+      }
+    }
+  }
+
+  implicit object AmendRegistrationResultResponseReads extends HttpReads[AmendRegistrationResultResponse] {
+    override def read(method: String, url: String, response: HttpResponse): AmendRegistrationResultResponse = {
+      response.status match {
+        case OK => Right(())
+        case status =>
+          Left(UnexpectedResponseStatus(response.status, s"Unexpected amend response, status $status returned"))
       }
     }
   }
