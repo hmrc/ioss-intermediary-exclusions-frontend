@@ -75,7 +75,7 @@ class ApplicationCompleteController @Inject()(
       Ok(view(
         config.iossYourAccountUrl,
         dates.formatter.format(leaveDate),
-        dates.formatter.format(leaveDate.minusDays(1))
+        dates.formatter.format(leaveDate)
       ))
     }
   }

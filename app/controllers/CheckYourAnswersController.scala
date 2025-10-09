@@ -20,10 +20,13 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.AuthenticatedControllerComponents
 import date.Dates
-import models.CheckMode
-import pages.{CheckYourAnswersPage, EmptyWaypoints, Waypoint, Waypoints}
+import logging.Logging
+import models.etmp.EtmpExclusionReason
+import models.{CheckMode, UserAnswers}
+import pages.{CheckYourAnswersPage, EmptyWaypoints, LeaveSchemePage, MoveCountryPage, Waypoint, Waypoints}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.RegistrationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CompletionChecks
 import utils.FutureSyntax.FutureOps
@@ -31,13 +34,17 @@ import viewmodels.checkAnswers.*
 import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
 
+import scala.concurrent.ExecutionContext
+
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             cc: AuthenticatedControllerComponents,
                                             dates: Dates,
                                             view: CheckYourAnswersView,
-                                            config: FrontendAppConfig
-                                          ) extends FrontendBaseController with I18nSupport with CompletionChecks {
+                                            config: FrontendAppConfig,
+                                            registrationService: RegistrationService
+                                          )(implicit ec: ExecutionContext)
+  extends FrontendBaseController with I18nSupport with CompletionChecks with Logging {
 
   protected val controllerComponents: MessagesControllerComponents = cc
 
@@ -76,7 +83,40 @@ class CheckYourAnswersController @Inject()(
           Redirect(routes.CheckYourAnswersController.onPageLoad()).toFuture
         }
         case None =>
-          Redirect(CheckYourAnswersPage.navigate(waypoints, request.userAnswers, request.userAnswers).route).toFuture
+
+          val exclusionReason = determineExclusionReason(request.userAnswers)
+          
+          registrationService.amendRegistration(
+            request.userAnswers,
+            Some(exclusionReason),
+            request.intermediaryNumber,
+            request.displayRegistration
+          ).map {
+            case Right(_) =>
+              Redirect(CheckYourAnswersPage.navigate(waypoints, request.userAnswers, request.userAnswers).route)
+            case Left(e) =>
+              logger.error(s"Failure to submit self exclusion ${e.body}")
+              Redirect(routes.SubmissionFailureController.onPageLoad())
+          }
+
       }
+  }
+
+  private def determineExclusionReason(userAnswers: UserAnswers): EtmpExclusionReason = {
+    userAnswers.get(MoveCountryPage) match {
+      case Some(true) =>
+        EtmpExclusionReason.TransferringMSID
+      case Some(false) =>
+        userAnswers.get(LeaveSchemePage) match {
+          case Some(true) =>
+            EtmpExclusionReason.VoluntarilyLeaves
+          case Some(false) =>
+            throw new Exception("User chose not to move country or leave scheme")
+          case None =>
+            throw new Exception("Expected answer for LeaveSchemePage when MoveCountryPage = false")
+        }
+      case _ =>
+        throw new Exception("Expected answer for move country page")
+    }
   }
 }

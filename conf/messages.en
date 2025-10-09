@@ -130,3 +130,9 @@ cancelLeaveScheme.contact = To stay on the service, email <a class="govuk-link" 
 
 accessDeniedExcluded.title = You cannot access this page
 accessDeniedExcluded.heading = You cannot access this page
+
+submissionFailure.title = We have a problem with our service right now
+submissionFailure.heading = We have not received your request to leave
+submissionFailure.tryAgainLater = Please try again later.
+submissionFailure.contactUs = If the problem continues, you can email us at <a class="govuk-link" href="mailto:vatoss.contact@hmrc.gov.uk">vatoss.contact@hmrc.gov.uk</a>
+submissionFailure.next.info.returnToAccount = Back to your account

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package config
+package models.etmp
 
-object Constants {
+import play.api.libs.json.{Json, OFormat}
+
+case class EtmpOtherIossIntermediaryRegistrations(issuedBy: String, intermediaryNumber: String)
+
+object EtmpOtherIossIntermediaryRegistrations {
   
-  val intermediaryEnrolmentKey: String = "IntNumber"
-  val maxTradingNames: Int = 10
-  
+  implicit val format: OFormat[EtmpOtherIossIntermediaryRegistrations] = Json.format[EtmpOtherIossIntermediaryRegistrations]
 }
