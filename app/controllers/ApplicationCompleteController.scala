@@ -63,7 +63,7 @@ class ApplicationCompleteController @Inject()(
         config.iossYourAccountUrl,
         dates.formatter.format(leaveDate),
         dates.formatter.format(maxChangeDate),
-        Some(messages("applicationComplete.moving.text", country.name, dates.formatter.format(maxChangeDate))),
+        Some(messages("applicationComplete.moving.text", country.name, dates.formatter.format(leaveDate))),
         Some(messages("applicationComplete.next.info.bottom.p1", country.name, dates.formatter.format(maxChangeDate)))
       ))
     }

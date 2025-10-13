@@ -65,7 +65,7 @@ class ApplicationCompleteControllerSpec extends SpecBase {
             config.iossYourAccountUrl,
             leaveDate,
             maxMoveDate,
-            Some(messages(application)("applicationComplete.moving.text", country.name, maxMoveDate)),
+            Some(messages(application)("applicationComplete.moving.text", country.name, leaveDate)),
             Some(messages(application)("applicationComplete.next.info.bottom.p1", country.name, maxMoveDate))
           )(request, messages(application)).toString
         }
@@ -93,13 +93,13 @@ class ApplicationCompleteControllerSpec extends SpecBase {
           val config = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
-          val leaveDate = "25 January 2024"
+          val leaveDate = "26 January 2024"
           val maxMoveDate = "10 February 2024"
           contentAsString(result) mustEqual view(
             config.iossYourAccountUrl,
             leaveDate,
             maxMoveDate,
-            Some(messages(application)("applicationComplete.moving.text", country.name, maxMoveDate)),
+            Some(messages(application)("applicationComplete.moving.text", country.name, leaveDate)),
             Some(messages(application)("applicationComplete.next.info.bottom.p1", country.name, maxMoveDate))
           )(request, messages(application)).toString
         }
