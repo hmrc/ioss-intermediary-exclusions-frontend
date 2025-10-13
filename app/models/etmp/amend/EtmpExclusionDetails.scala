@@ -24,7 +24,7 @@ case class EtmpExclusionDetails(
                                  revertExclusion: Boolean,
                                  noLongerSupplyGoods: Boolean,
                                  noLongerEligible: Boolean,
-                                 partyType: String = "NETP",
+                                 partyType: String = "INT",
                                  exclusionRequestDate: Option[LocalDate],
                                  identificationValidityDate: Option[LocalDate],
                                  intExclusionRequestDate: Option[LocalDate],
