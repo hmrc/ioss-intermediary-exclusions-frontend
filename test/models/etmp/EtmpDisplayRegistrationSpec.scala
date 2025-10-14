@@ -29,12 +29,20 @@ class EtmpDisplayRegistrationSpec extends SpecBase {
 
       val json = Json.obj(
         "exclusions" -> etmpDisplayRegistration.exclusions,
-        "schemeDetails" -> etmpDisplayRegistration.schemeDetails
+        "schemeDetails" -> etmpDisplayRegistration.schemeDetails,
+        "tradingNames" -> etmpDisplayRegistration.tradingNames,
+        "intermediaryDetails" -> etmpDisplayRegistration.intermediaryDetails,
+        "otherAddress" -> etmpDisplayRegistration.otherAddress,
+        "bankDetails" -> etmpDisplayRegistration.bankDetails
       )
 
       val expectedResult = EtmpDisplayRegistration(
         exclusions = etmpDisplayRegistration.exclusions,
-        schemeDetails = etmpDisplayRegistration.schemeDetails
+        schemeDetails = etmpDisplayRegistration.schemeDetails,
+        tradingNames = etmpDisplayRegistration.tradingNames,
+        intermediaryDetails = etmpDisplayRegistration.intermediaryDetails,
+        otherAddress = etmpDisplayRegistration.otherAddress,
+        bankDetails = etmpDisplayRegistration.bankDetails
       )
 
       json.validate[EtmpDisplayRegistration] `mustBe` JsSuccess(expectedResult)
@@ -44,12 +52,20 @@ class EtmpDisplayRegistrationSpec extends SpecBase {
 
       val fromEtmpDisplayRegistration = EtmpDisplayRegistration(
         exclusions = etmpDisplayRegistration.exclusions,
-        schemeDetails = etmpDisplayRegistration.schemeDetails
+        schemeDetails = etmpDisplayRegistration.schemeDetails,
+        tradingNames = etmpDisplayRegistration.tradingNames,
+        intermediaryDetails = etmpDisplayRegistration.intermediaryDetails,
+        otherAddress = etmpDisplayRegistration.otherAddress,
+        bankDetails = etmpDisplayRegistration.bankDetails
       )
 
       val expectedResult = Json.obj(
         "exclusions" -> etmpDisplayRegistration.exclusions,
         "schemeDetails" -> etmpDisplayRegistration.schemeDetails,
+        "tradingNames" -> etmpDisplayRegistration.tradingNames,
+        "intermediaryDetails" -> etmpDisplayRegistration.intermediaryDetails,
+        "otherAddress" -> etmpDisplayRegistration.otherAddress,
+        "bankDetails" -> etmpDisplayRegistration.bankDetails
       )
 
       Json.toJson(fromEtmpDisplayRegistration) `mustBe` expectedResult

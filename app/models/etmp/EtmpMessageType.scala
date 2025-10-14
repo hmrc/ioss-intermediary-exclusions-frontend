@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package config
+package models.etmp
 
-object Constants {
-  
-  val intermediaryEnrolmentKey: String = "IntNumber"
-  val maxTradingNames: Int = 10
-  
+import models.{Enumerable, WithName}
+
+sealed trait EtmpMessageType
+
+object EtmpMessageType extends Enumerable.Implicits {
+
+  case object IOSSIntCreate extends WithName("IOSSIntCreate") with EtmpMessageType
+  case object IOSSIntAmend extends WithName("IOSSIntAmend") with EtmpMessageType
+
+  val values: Seq[EtmpMessageType] = Seq(
+    IOSSIntCreate, IOSSIntAmend
+  )
+
+  implicit val enumerable: Enumerable[EtmpMessageType] =
+    Enumerable(values.map(v => v.toString -> v): _*)
 }

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package config
+package models.etmp.amend
 
-object Constants {
-  
-  val intermediaryEnrolmentKey: String = "IntNumber"
-  val maxTradingNames: Int = 10
-  
+import play.api.libs.json.{Json, OFormat}
+
+case class EtmpAmendCustomerIdentification(iossNumber: String)
+
+object EtmpAmendCustomerIdentification {
+
+  implicit val format: OFormat[EtmpAmendCustomerIdentification] = Json.format[EtmpAmendCustomerIdentification]
 }

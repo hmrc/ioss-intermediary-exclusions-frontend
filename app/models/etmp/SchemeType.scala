@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-package config
+package models.etmp
 
-object Constants {
+import models.{Enumerable, WithName}
+
+sealed trait SchemeType
+
+object SchemeType extends Enumerable.Implicits {
+
+  case object IOSSIntermediary extends WithName("IOSS") with SchemeType
   
-  val intermediaryEnrolmentKey: String = "IntNumber"
-  val maxTradingNames: Int = 10
-  
+  val values: Seq[SchemeType] = Seq(
+    IOSSIntermediary
+  )
+
+  implicit val enumerable: Enumerable[SchemeType] =
+    Enumerable(values.map(v => v.toString -> v): _*)
 }
