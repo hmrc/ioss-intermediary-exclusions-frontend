@@ -35,9 +35,10 @@ class ApplicationCompleteControllerSpec extends SpecBase {
 
     "when someone moves business" - {
 
-      "must return OK and the correct view for a GET" in {
+      "must return OK the leave date in the future and show leave text" in {
 
-        val moveDate = today.plusDays(1)
+        val today = LocalDate.now()
+        val moveDate = today.plusDays(5)
 
         val userAnswers = emptyUserAnswers
           .set(MoveCountryPage, true).success.get
@@ -71,6 +72,42 @@ class ApplicationCompleteControllerSpec extends SpecBase {
         }
       }
 
+      "must return OK and the leave date in the past and show leave text" in {
+
+        val moveDate = today.minusDays(1)
+
+        val userAnswers = emptyUserAnswers
+          .set(MoveCountryPage, true).success.get
+          .set(EuCountryPage, country).success.get
+          .set(MoveDatePage, moveDate).success.get
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers), clock = Some(clock))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ApplicationCompleteController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          val view = application.injector.instanceOf[ApplicationCompleteView]
+
+          val config = application.injector.instanceOf[FrontendAppConfig]
+
+          val dates = application.injector.instanceOf[Dates]
+
+          status(result) mustEqual OK
+          val leaveDate = moveDate.format(dates.formatter)
+          val maxMoveDate = moveDate.plusMonths(1).withDayOfMonth(dates.MoveDayOfMonthSplit).format(dates.formatter)
+          contentAsString(result) mustEqual view(
+            config.iossYourAccountUrl,
+            leaveDate,
+            maxMoveDate,
+            Some(messages(application)("applicationComplete.movingCountry.text", country.name)),
+            Some(messages(application)("applicationComplete.next.info.bottom.p1", country.name, maxMoveDate))
+          )(request, messages(application)).toString
+        }
+      }
+
       "must return OK with the leave date being the 10th of next month (10th Feb)" in {
 
         val moveDate = today.plusDays(1)
@@ -99,7 +136,7 @@ class ApplicationCompleteControllerSpec extends SpecBase {
             config.iossYourAccountUrl,
             leaveDate,
             maxMoveDate,
-            Some(messages(application)("applicationComplete.moving.text", country.name, leaveDate)),
+            Some(messages(application)("applicationComplete.movingCountry.text", country.name)),
             Some(messages(application)("applicationComplete.next.info.bottom.p1", country.name, maxMoveDate))
           )(request, messages(application)).toString
         }
