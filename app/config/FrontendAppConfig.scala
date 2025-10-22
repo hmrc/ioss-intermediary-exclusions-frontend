@@ -38,6 +38,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   val signOutUrl: String       = configuration.get[String]("urls.signOut")
   val iossYourAccountUrl: String = configuration.get[String]("urls.yourAccountUrl")
+  val rejoinSchemeUrl: String = configuration.get[String]("urls.rejoinSchemeUrl")
 
   val allowedRedirectUrls: Seq[String] = configuration.get[Seq[String]]("urls.allowedRedirects")
 

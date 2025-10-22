@@ -39,6 +39,8 @@ trait AuthenticatedControllerComponents extends MessagesControllerComponents {
 
   def checkIntermediaryExcluded: CheckIntermediaryExcludedFilter
 
+  def checkIntermediaryNotExcluded: CheckIntermediaryNotExcludedFilter
+
   def identifyAndGetData: ActionBuilder[DataRequest, AnyContent] =
     identifyAndGetOptionalData andThen
       requireData
@@ -49,6 +51,11 @@ trait AuthenticatedControllerComponents extends MessagesControllerComponents {
       getData andThen
       checkIntermediaryExcluded()
 
+  def identifyAndGetOptionalDataWithExclusionInformation: ActionBuilder[OptionalDataRequest, AnyContent] =
+    actionBuilder andThen
+      identify andThen
+      getData andThen
+      checkIntermediaryNotExcluded()
 }
 
 case class DefaultAuthenticatedControllerComponents @Inject()(
@@ -63,5 +70,6 @@ case class DefaultAuthenticatedControllerComponents @Inject()(
                                                                identify: IdentifierAction,
                                                                getData: DataRetrievalAction,
                                                                requireData: DataRequiredAction,
-                                                               checkIntermediaryExcluded: CheckIntermediaryExcludedFilter
+                                                               checkIntermediaryExcluded: CheckIntermediaryExcludedFilter,
+                                                               checkIntermediaryNotExcluded: CheckIntermediaryNotExcludedFilter
                                                              ) extends AuthenticatedControllerComponents

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package config
+package models.etmp
 
-object Constants {
-  
-  val intermediaryEnrolmentKey: String = "IntNumber"
-  val niPostCodeAreaPrefix: String = "BT"
-  
+import models.domain.VatCustomerInfo
+import play.api.libs.json.{Json, OFormat}
+
+case class RegistrationWrapper(vatInfo: VatCustomerInfo, etmpDisplayRegistration: EtmpDisplayRegistration)
+
+object RegistrationWrapper {
+
+  implicit val format: OFormat[RegistrationWrapper] = Json.format[RegistrationWrapper]
 }

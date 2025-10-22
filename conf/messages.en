@@ -131,5 +131,13 @@ cancelLeaveScheme.contact = To stay on the service, email <a class="govuk-link" 
 accessDeniedExcluded.title = You cannot access this page
 accessDeniedExcluded.heading = You cannot access this page
 
-rejoinScheme.title = rejoinScheme
-rejoinScheme.heading = rejoinScheme
+rejoinScheme.title = Check you details are still correct
+rejoinScheme.heading = Check you details are still correct
+rejoinScheme.vatRegistrationDetails.heading = VAT registration details
+rejoinScheme.vatRegistrationDetails.organisationName = Business name
+rejoinScheme.vatRegistrationDetails.businessAddress = Principal place of business address
+rejoinScheme.vatRegistrationDetails.vatRegistrationNumber = UK VAT registration number
+rejoinScheme.vatRegistrationDetails.manageVatBTA = <a class="govuk-link" href="/business-account" rel="noreferrer noopener" target="_blank">Manage your UK VAT registration in your BTA account (opens in new tab)</a>
+rejoinScheme.iossDetails.heading = Import One Stop Shop details
+rejoinScheme.iossDetails.tradingName = Have a different UK trading name
+rejoinScheme.iossDetails.otherTradingNAmes = Other trading names

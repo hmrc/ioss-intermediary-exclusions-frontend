@@ -18,6 +18,7 @@ package connectors
 
 import config.Service
 import connectors.RegistrationConnectorHttpParser.{EtmpDisplayRegistrationResponse, EtmpDisplayRegistrationResponseReads}
+import connectors.RegistrationHttpParser.{EtmpDisplayRegistrationResponseWithWrapper, EtmpDisplayRegistrationResponseWithWrapperReads}
 import connectors.VatCustomerInfoHttpParser.{VatCustomerInfoResponse, VatCustomerInfoResponseReads}
 import play.api.Configuration
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -38,7 +39,7 @@ class RegistrationConnector @Inject()(
       .execute[EtmpDisplayRegistrationResponse]
   }
 
-  def getVatCustomerInfo()(implicit hc: HeaderCarrier): Future[VatCustomerInfoResponse] = {
-    httpClientV2.get(url"$baseUrl/vat-information").execute[VatCustomerInfoResponse]
+  def displayRegistration(intermediaryNumber: String)(implicit hc: HeaderCarrier): Future[EtmpDisplayRegistrationResponseWithWrapper] = {
+    httpClientV2.get(url"$baseUrl/get-registration/$intermediaryNumber").execute[EtmpDisplayRegistrationResponseWithWrapper]
   }
 }

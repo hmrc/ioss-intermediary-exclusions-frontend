@@ -47,4 +47,4 @@ GET        /cancel-leave-scheme                          controllers.CancelLeave
 
 GET        /no-access-excluded                           controllers.AccessDeniedExcludedController.onPageLoad()
 
-GET        /rejoinScheme                       controllers.RejoinSchemeController.onPageLoad()
+GET        /start-rejoin-journey                         controllers.rejoin.StartRejoinJourneyController.onPageLoad(waypoints: Waypoints ?= EmptyWaypoints)

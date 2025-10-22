@@ -24,4 +24,8 @@ class CheckExclusionsService {
   def getLastExclusionWithoutReversal(exclusions: List[EtmpExclusion]): Option[EtmpExclusion] = {
     exclusions.headOption.filterNot(_.exclusionReason == Reversal)
   }
+
+  def getLastExclusion(exclusions: List[EtmpExclusion]): Option[EtmpExclusion] = {
+    exclusions.headOption.filter(_.exclusionReason == Reversal)
+  }
 }
