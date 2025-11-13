@@ -18,19 +18,52 @@ package services
 
 import connectors.RegistrationConnector
 import connectors.RegistrationConnectorHttpParser.AmendRegistrationResultResponse
+import models.amend.{ExclusionAuditModel, ExclusionAuditType, SubmissionResult}
 import models.{CountryWithValidationDetails, UserAnswers}
 import models.etmp.EtmpMessageType.IOSSIntAmend
 import models.etmp.amend.*
 import models.etmp.*
 import pages.{EuCountryPage, EuVatNumberPage, MoveDatePage, StoppedUsingServiceDatePage}
+import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.{Clock, LocalDate}
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 
-class RegistrationService @Inject()(clock: Clock, registrationConnector: RegistrationConnector) {
+class RegistrationService @Inject()(
+                                     clock: Clock,
+                                     registrationConnector: RegistrationConnector,
+                                     auditService: AuditService
+                                   )(implicit ec: ExecutionContext) {
+
+  def amendRegistrationAndAudit(
+                                 userId: String,
+                                 userAnswers: UserAnswers,
+                                 intermediaryNumber: String,
+                                 displayRegistration: EtmpDisplayRegistration,
+                                 exclusionReason: Option[EtmpExclusionReason],
+                                 exclusionAuditType: ExclusionAuditType
+                               )(implicit hc: HeaderCarrier, request: Request[_]): Future[AmendRegistrationResultResponse] =
+
+    val success: ExclusionAuditModel = ExclusionAuditModel(
+      exclusionAuditType = exclusionAuditType,
+      userId = userId,
+      userAgent = request.headers.get("user-agent").getOrElse(""),
+      userAnswers = userAnswers,
+      intermediaryNumber = intermediaryNumber,
+      displayRegistration = displayRegistration,
+      exclusionReason = exclusionReason,
+      submissionResult = SubmissionResult.Success
+    )
+    val failure: ExclusionAuditModel = success.copy(submissionResult = SubmissionResult.Failure)
+
+    amendRegistration(userAnswers, exclusionReason, intermediaryNumber, displayRegistration).andThen {
+      case Success(Right(_)) => auditService.audit(success)(hc, request)
+      case _ => auditService.audit(failure)(hc, request)
+    }
 
   def amendRegistration(
                          answers: UserAnswers,
