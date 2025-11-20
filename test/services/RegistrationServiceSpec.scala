@@ -33,6 +33,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.FutureSyntax.FutureOps
 
 import java.time.LocalDate
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class RegistrationServiceSpec extends SpecBase with BeforeAndAfterEach {
@@ -40,7 +41,8 @@ class RegistrationServiceSpec extends SpecBase with BeforeAndAfterEach {
   private implicit val hc: HeaderCarrier = HeaderCarrier()
 
   private val mockRegistrationConnector: RegistrationConnector = mock[RegistrationConnector]
-  private val registrationService = new RegistrationService(stubClockAtArbitraryDate, mockRegistrationConnector)
+  private val mockAuditService: AuditService = mock[AuditService]
+  private val registrationService = new RegistrationService(stubClockAtArbitraryDate, mockRegistrationConnector, mockAuditService)
 
   private val expectedChangeLog = EtmpAmendRegistrationChangeLog(
     tradingNames = false,
