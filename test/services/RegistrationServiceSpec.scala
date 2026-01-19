@@ -118,9 +118,9 @@ class RegistrationServiceSpec extends SpecBase with BeforeAndAfterEach {
           revertExclusion = false,
           noLongerSupplyGoods = false,
           noLongerEligible = false,
-          exclusionRequestDate = Some(LocalDate.now(stubClockAtArbitraryDate)),
+          exclusionRequestDate = None,
           identificationValidityDate = None,
-          intExclusionRequestDate = None,
+          intExclusionRequestDate = Some(LocalDate.now(stubClockAtArbitraryDate)),
           newMemberState = Some(EtmpNewMemberState(
             newMemberState = true,
             ceaseSpecialSchemeDate = None,
@@ -165,9 +165,9 @@ class RegistrationServiceSpec extends SpecBase with BeforeAndAfterEach {
           revertExclusion = false,
           noLongerSupplyGoods = false,
           noLongerEligible = false,
-          exclusionRequestDate = Some(stoppedUsingServiceDate),
+          exclusionRequestDate = None,
           identificationValidityDate = None,
-          intExclusionRequestDate = None,
+          intExclusionRequestDate = Some(stoppedUsingServiceDate),
           newMemberState = None
         )
 
