@@ -22,6 +22,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.auth.InsufficientEnrolmentsView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -31,7 +32,8 @@ class AuthController @Inject()(
                                 val controllerComponents: MessagesControllerComponents,
                                 config: FrontendAppConfig,
                                 sessionRepository: SessionRepository,
-                                identify: IdentifierAction
+                                identify: IdentifierAction,
+                                insufficientEnrolmentsView: InsufficientEnrolmentsView
                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def signOut(): Action[AnyContent] = identify.async {
@@ -47,5 +49,10 @@ class AuthController @Inject()(
   def signOutNoSurvey(): Action[AnyContent] = Action {
     _ =>
       Redirect(config.signOutUrl, Map("continue" -> Seq(s"${config.host}${routes.SignedOutController.onPageLoad().path()}")))
+  }
+
+  def insufficientEnrolments(): Action[AnyContent] = Action {
+    implicit request =>
+      Ok(insufficientEnrolmentsView())
   }
 }

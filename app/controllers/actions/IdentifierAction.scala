@@ -21,6 +21,7 @@ import config.Constants.intermediaryEnrolmentKey
 import config.FrontendAppConfig
 import connectors.RegistrationConnector
 import controllers.routes
+import controllers.auth.routes as authRoutes
 import logging.Logging
 import models.etmp.EtmpDisplayRegistration
 import models.requests.{IdentifierRequest, SessionRequest}
@@ -60,8 +61,8 @@ class AuthenticatedIdentifierAction @Inject()(
       case Some(internalId) ~ enrolments =>
         findIntermediaryNumberFromEnrolments(enrolments) match {
           case Some(intermediaryNumber) =>
+            val vrn = findVrnFromEnrolments(enrolments)
             getDisplayRegistration(intermediaryNumber).flatMap { displayRegistration =>
-              val vrn = findVrnFromEnrolments(enrolments)
               block(IdentifierRequest(request, internalId, enrolments, vrn, intermediaryNumber, displayRegistration))
             }
 
@@ -73,6 +74,9 @@ class AuthenticatedIdentifierAction @Inject()(
     } recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(urlBuilderService.loginContinueUrl(request).get(redirectPolicy).url)))
+      case _: InsufficientEnrolments =>
+        logger.info("Insufficient enrolments")
+        Redirect(authRoutes.AuthController.insufficientEnrolments())
       case _: AuthorisationException =>
         Redirect(routes.UnauthorisedController.onPageLoad())
     }
@@ -83,7 +87,7 @@ class AuthenticatedIdentifierAction @Inject()(
       .flatMap(_.identifiers.find(id => id.key == "VRN").map(e => Vrn(e.value)))
       .getOrElse {
         logger.warn("User does not have a valid VAT enrolment")
-        throw new IllegalStateException("Missing VAT enrolment")
+        throw InsufficientEnrolments()
       }
   }
 

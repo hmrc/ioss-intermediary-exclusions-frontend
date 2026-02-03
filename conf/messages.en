@@ -56,6 +56,9 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
+insufficientEnrolments.title = You cannot use this service
+insufficientEnrolments.heading = You cannot use this service
+
 cannotUseNotAnIntermediary.title = You cannot use this service
 cannotUseNotAnIntermediary.heading = You cannot use this service
 
