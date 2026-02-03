@@ -18,6 +18,7 @@ POST        /check-your-answers/:incompletePrompt        controllers.CheckYourAn
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad()
+GET         /credential-unsupported                      controllers.auth.AuthController.insufficientEnrolments()
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
 
