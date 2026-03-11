@@ -115,7 +115,6 @@ stoppedUsingServiceDate.change.hidden = leaving date
 applicationComplete.title = We have received your request to leave this IOSS service
 applicationComplete.heading = We have received your request to leave this IOSS service
 applicationComplete.heading.scheme = We have received your request to leave the IOSS scheme
-applicationComplete.movingCountry.text = You are moving your business to {0}.
 applicationComplete.left.text = We will send your clients a message to let them know:
 applicationComplete.left.text.info.b1 = you have now left the service.
 applicationComplete.left.text.info.b2 = we will remove their registration from your account
