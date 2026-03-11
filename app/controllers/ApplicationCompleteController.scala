@@ -27,6 +27,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ApplicationCompleteView
 
 import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters.lastDayOfMonth
 import javax.inject.Inject
 
 class ApplicationCompleteController @Inject()(
@@ -62,6 +63,7 @@ class ApplicationCompleteController @Inject()(
       leaveDate <- request.userAnswers.get(MoveDatePage)
     } yield {
       val maxChangeDate = leaveDate.plusMonths(1).withDayOfMonth(dates.MoveDayOfMonthSplit)
+      val reregisterByDate = leaveDate.`with`(lastDayOfMonth())
       val isDateBeforeToday = leaveDate < LocalDate.now()
 
       val leaveMessage = if (isDateBeforeToday) {
@@ -75,18 +77,28 @@ class ApplicationCompleteController @Inject()(
         dates.formatter.format(leaveDate),
         dates.formatter.format(maxChangeDate),
         leaveMessage,
-        Some(messages("applicationComplete.next.info.bottom.p1", country.name, dates.formatter.format(maxChangeDate)))
+        panelHeading = messages("applicationComplete.heading"),
+        reregisterBullet1 = Some(messages("applicationComplete.next.info.reregister.b1",
+          country.name, dates.formatter.format(leaveDate))),
+        reregisteredByDate = dates.formatter.format(reregisterByDate)
       ))
     }
   }
 
   private def onStopUsingService()(implicit request: DataRequest[_]): Option[Result] = {
+    val messages: Messages = implicitly[Messages]
     request.userAnswers.get(StoppedUsingServiceDatePage).map { stoppedUsingServiceDate =>
       val leaveDate = dates.getLeaveDateWhenStoppedUsingService(stoppedUsingServiceDate)
+      val reregisterByDate = leaveDate.`with`(lastDayOfMonth())
+
       Ok(view(
         config.iossYourAccountUrl,
         dates.formatter.format(leaveDate),
-        dates.formatter.format(leaveDate)
+        dates.formatter.format(leaveDate),
+        panelHeading = messages("applicationComplete.heading.scheme"),
+        reregisterPara = Some(messages("applicationComplete.next.info.reregister",
+          dates.formatter.format(reregisterByDate))),
+        reregisteredByDate = dates.formatter.format(reregisterByDate)
       ))
     }
   }

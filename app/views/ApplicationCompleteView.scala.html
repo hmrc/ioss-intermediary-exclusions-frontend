@@ -24,14 +24,17 @@
     leaveDate: String,
     maxChangeDate: String,
     recap: Option[String] = None,
-    leaveMessage: Option[String] = None,
-    isBeforeToday: Option[String] = None
+    isBeforeToday: Option[String] = None,
+    panelHeading: String,
+    reregisterBullet1: Option[String] = None,
+    reregisterPara: Option[String] = None,
+    reregisteredByDate: String
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("applicationComplete.title"))) {
 
     <div class="govuk-panel govuk-panel--confirmation">
-        <h1 class="govuk-panel__title">@messages("applicationComplete.heading")</h1>
+        <h1 class="govuk-panel__title">@panelHeading</h1>
     </div>
 
     <p class="govuk-body">
@@ -55,9 +58,17 @@
         <li>@messages("applicationComplete.next.info.bullet2")</li>
     </ul>
 
-    <p class="govuk-body">
-        @leaveMessage.map { text => @Html(text) }
-    </p>
+    @reregisterBullet1.map { b1 =>
+        <p class="govuk-body">@messages("applicationComplete.next.info.bottom.p1")</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>@Html(b1)</li>
+                <li>@Html(messages("applicationComplete.next.info.reregister.b2", reregisteredByDate))</li>
+            </ul>
+    }
+
+    @reregisterPara.map { para =>
+        <p class="govuk-body">@Html(para)</p>
+    }
 
     <p class="govuk-body">
         @Html(messages("applicationComplete.next.info.bottom.p2", maxChangeDate))

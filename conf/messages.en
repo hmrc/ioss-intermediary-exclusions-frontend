@@ -114,8 +114,8 @@ stoppedUsingServiceDate.change.hidden = leaving date
 
 applicationComplete.title = We have received your request to leave this IOSS service
 applicationComplete.heading = We have received your request to leave this IOSS service
+applicationComplete.heading.scheme = We have received your request to leave the IOSS scheme
 applicationComplete.movingCountry.text = You are moving your business to {0}.
-applicationComplete.moving.text = You are moving your business to {0}. You will leave this service on <strong>{1}</strong>.
 applicationComplete.left.text = We will send your clients a message to let them know:
 applicationComplete.left.text.info.b1 = you have now left the service.
 applicationComplete.left.text.info.b2 = we will remove their registration from your account
@@ -124,7 +124,10 @@ applicationComplete.next.info.top = You must:
 applicationComplete.next.info.bullet0 = complete any outstanding VAT returns on your account
 applicationComplete.next.info.bullet1 = complete a final VAT return for all your active clients
 applicationComplete.next.info.bullet2 = pay any VAT you still owe
-applicationComplete.next.info.bottom.p1 = To ensure continuous use of the scheme, you must register as an intermediary in {0} by <strong>{1}</strong>. You must also register any clients by then.
+applicationComplete.next.info.bottom.p1 = To ensure continuous use of the scheme
+applicationComplete.next.info.reregister.b1 = you must register as an intermediary in {0} by <strong>{1}</strong>
+applicationComplete.next.info.reregister.b2 = any active clients must register with another IOSS service by <strong>{0}</strong>
+applicationComplete.next.info.reregister = Any active clients will have until <strong>{0}</strong> to register with another IOSS service to ensure continuous use of the scheme.
 applicationComplete.next.info.bottom.p2 = If you wish to cancel this, you must contact <a class="govuk-link" href="mailto:vatoss.contact@hmrc.gov.uk">vatoss.contact@hmrc.gov.uk</a> by <strong>{0}</strong>
 applicationComplete.next.info.returnToAccount = Return to your account
 
