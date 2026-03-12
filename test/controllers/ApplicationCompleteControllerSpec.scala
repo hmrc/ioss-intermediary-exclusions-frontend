@@ -62,12 +62,14 @@ class ApplicationCompleteControllerSpec extends SpecBase {
           status(result) mustEqual OK
           val leaveDate = moveDate.format(dates.formatter)
           val maxMoveDate = moveDate.plusMonths(1).withDayOfMonth(dates.MoveDayOfMonthSplit).format(dates.formatter)
+          val reregisteredByDate = "29 February 2024"
           contentAsString(result) mustEqual view(
             config.iossYourAccountUrl,
             leaveDate,
             maxMoveDate,
-            Some(messages(application)("applicationComplete.moving.text", country.name, leaveDate)),
-            Some(messages(application)("applicationComplete.next.info.bottom.p1", country.name, maxMoveDate))
+            panelHeading = messages(application)("applicationComplete.heading"),
+            reregisterBullet1 = Some(messages(application)("applicationComplete.next.info.reregister.b1", country.name, maxMoveDate)),
+            reregisteredByDate = reregisteredByDate
           )(request, messages(application)).toString
         }
       }
@@ -98,12 +100,14 @@ class ApplicationCompleteControllerSpec extends SpecBase {
           status(result) mustEqual OK
           val leaveDate = moveDate.format(dates.formatter)
           val maxMoveDate = moveDate.plusMonths(1).withDayOfMonth(dates.MoveDayOfMonthSplit).format(dates.formatter)
+          val reregisteredByDate = "29 February 2024"
           contentAsString(result) mustEqual view(
             config.iossYourAccountUrl,
             leaveDate,
             maxMoveDate,
-            Some(messages(application)("applicationComplete.movingCountry.text", country.name)),
-            Some(messages(application)("applicationComplete.next.info.bottom.p1", country.name, maxMoveDate))
+            panelHeading = messages(application)("applicationComplete.heading"),
+            reregisterBullet1 = Some(messages(application)("applicationComplete.next.info.reregister.b1", country.name, maxMoveDate)),
+            reregisteredByDate = reregisteredByDate
           )(request, messages(application)).toString
         }
       }
@@ -132,12 +136,14 @@ class ApplicationCompleteControllerSpec extends SpecBase {
           status(result) mustEqual OK
           val leaveDate = "26 January 2024"
           val maxMoveDate = "10 February 2024"
+          val reregisteredByDate = "29 February 2024"
           contentAsString(result) mustEqual view(
             config.iossYourAccountUrl,
             leaveDate,
             maxMoveDate,
-            Some(messages(application)("applicationComplete.movingCountry.text", country.name)),
-            Some(messages(application)("applicationComplete.next.info.bottom.p1", country.name, maxMoveDate))
+            panelHeading = messages(application)("applicationComplete.heading"),
+            reregisterBullet1 = Some(messages(application)("applicationComplete.next.info.reregister.b1", country.name, maxMoveDate)),
+            reregisteredByDate = reregisteredByDate
           )(request, messages(application)).toString
         }
       }
@@ -169,7 +175,15 @@ class ApplicationCompleteControllerSpec extends SpecBase {
             status(result) mustEqual OK
             val leaveDate = "1 February 2024"
             val maxChangeDate = "1 February 2024"
-            contentAsString(result) mustEqual view(config.iossYourAccountUrl, leaveDate, maxChangeDate)(request, messages(application)).toString
+            val reregisteredByDate = "29 February 2024"
+            contentAsString(result) mustEqual view(
+              config.iossYourAccountUrl,
+              leaveDate,
+              maxChangeDate,
+              panelHeading = messages(application)("applicationComplete.heading.scheme"),
+              reregisterPara = Some(messages(application)("applicationComplete.next.info.reregister", reregisteredByDate)),
+              reregisteredByDate = reregisteredByDate
+            )(request, messages(application)).toString
           }
         }
 
@@ -196,7 +210,15 @@ class ApplicationCompleteControllerSpec extends SpecBase {
             status(result) mustEqual OK
             val leaveDate = "1 February 2024"
             val maxChangeDate = "1 March 2024"
-            contentAsString(result) mustEqual view(config.iossYourAccountUrl, leaveDate, maxChangeDate)(request, messages(application)).toString
+            val reregisteredByDate = "31 March 2024"
+            contentAsString(result) mustEqual view(
+              config.iossYourAccountUrl,
+              leaveDate,
+              maxChangeDate,
+              panelHeading = messages(application)("applicationComplete.heading.scheme"),
+              reregisterPara = Some(messages(application)("applicationComplete.next.info.reregister", reregisteredByDate)),
+              reregisteredByDate = reregisteredByDate
+            )(request, messages(application)).toString
           }
         }
       }
