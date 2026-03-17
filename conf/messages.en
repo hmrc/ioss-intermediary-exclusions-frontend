@@ -72,7 +72,7 @@ euCountry.title = Which country is your business moving to?
 euCountry.heading = Which country is your business moving to?
 euCountry.checkYourAnswersLabel = New country
 euCountry.error.required = Select the country your business is moving to
-euCountry.change.hidden = EuCountry
+euCountry.change.hidden = EU Country
 euCountry.hint = Start typing an EU country
 
 leaveScheme.title = Are you sure you want to leave the Import One Stop Shop scheme?
