@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.components.ButtonGroupProcessing
+@import views.html.components.{ButtonGroupProcessing, PrintPage}
 
 @this(
     formHelper: FormWithCSRF,
@@ -22,7 +22,8 @@
     govukSummaryList: GovukSummaryList,
     govukWarningText: GovukWarningText,
     govukErrorSummary: GovukErrorSummary,
-    button: ButtonGroupProcessing
+    button: ButtonGroupProcessing,
+    printPage: PrintPage
 )
 
 @(waypoints: Waypoints, list: SummaryList, cancelLink: String, isValid: Boolean)(implicit request: Request[_], messages: Messages)
@@ -37,6 +38,8 @@
     }
 
     <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
+
+    @printPage()
 
     @govukSummaryList(list)
 

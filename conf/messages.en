@@ -12,6 +12,7 @@ site.signIn = Sign in
 site.govuk = GOV.UK
 site.confirm = Confirm
 site.cancel = Cancel
+site.print = Print this page
 
 date.day = Day
 date.month = Month
